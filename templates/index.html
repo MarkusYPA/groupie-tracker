@@ -187,7 +187,7 @@
             <div class="artistcolumn">
                 {{range .Artists}}
 
-                <div class="artistbox">
+<!--                 <div class="artistbox">
                     <div class="title-row">
                         <img src="{{.Image}}" alt="{{.Name}} Image" class="artist-image">
                         <h3>{{.Name}}</h3>
@@ -206,6 +206,30 @@
                         {{.DateStr}} {{.Locale}}, {{.Country}}<br>
                         {{end}}
                     </div>
+                </div> -->
+
+                <div class="artistbox">
+                    <div class="collapsible">
+
+                        <img src="{{.Image}}" alt="{{.Name}} Image" class="artist-image">
+                        <h3>{{.Name}}</h3>
+
+                    </div>
+                    <div class="collapse-content">
+                        <div class="info-column">
+                            Started in {{.CreDate}}
+                            <b>Members:</b>
+                            {{range .Members}}
+                            {{.}}<br>
+                            {{end}}
+                            <b>First album release:</b>
+                            {{.FAString}}
+                            <b>Concerts:</b>
+                            {{range .Gigs}}
+                            {{.DateStr}} {{.Locale}}, {{.Country}}<br>
+                            {{end}}
+                        </div>
+                    </div>
                 </div>
 
                 {{end}}
@@ -213,6 +237,24 @@
 
         </div>
     </div>
+
+    <script>
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+    </script>
+
 </body>
 
 </html>

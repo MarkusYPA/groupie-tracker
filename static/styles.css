@@ -46,7 +46,7 @@ body {
     display: flex;
     flex-direction: column;
     margin: 30px;
-    
+
 }
 
 .artistbox b {
@@ -56,8 +56,8 @@ body {
 
 .artist-image {
     /* 240 by 240 */
-    /* max-width:240px; */
-    width: 240px;
+    max-width: 240px;
+    /* width: 240px; */
     margin-right: 40px;
 }
 
@@ -68,9 +68,9 @@ body {
     background-color: rgb(208, 208, 208);
 }
 
-.title-row:hover {
+/* .title-row:hover {
     background-color: #a8a8a8;
-  }
+} */
 
 .info-column {
     display: flex;
@@ -79,3 +79,43 @@ body {
     padding: 25px;
     background-color: rgb(230, 230, 230);
 }
+
+
+/* Copied from w3schools https://www.w3schools.com/howto/howto_js_collapsible.asp */
+
+/* Style the button that is used to open and close the collapsible content */
+.collapsible {
+    cursor: pointer;
+    width: 100%;
+    border: none;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: rgb(208, 208, 208);
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active,
+.collapsible:hover {
+    background-color: #b7b7b7;
+}
+
+/* Style the collapsible content. Note: hidden by default */
+.collapse-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+}
+
+/*    .collapsible:after {
+    content: '\02795';
+    font-size: 13px;
+    color: white;
+    float: right;
+    margin-left: 5px;
+  }
+  
+  .active:after {
+    content: "\2796";
+  } */
