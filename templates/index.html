@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artist Names</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+
+            <h1>Filter</h1>
+            <form method="POST" action="/">
+
+                <button type="submit">Apply filter</button><br><br>
+
+                <label for="order">Order by:</label>
+                <select name="order" id="order">
+                    <option value="namedown" {{if eq .Order "namedown" }}selected{{end}}>Name A-Z</option>
+                    <option value="fodown" {{if eq .Order "fodown" }}selected{{end}}>Started, old-new</option>
+                    <option value="fadown" {{if eq .Order "fadown" }}selected{{end}}>First album, old-new</option>
+                    <option value="perdown" {{if eq .Order "perdown" }}selected{{end}}>Latest performance, old-new
+                    </option>
+                    <option value="nameup" {{if eq .Order "nameup" }}selected{{end}}>Name Z-A</option>
+                    <option value="foup" {{if eq .Order "foup" }}selected{{end}}>Started, new-old</option>
+                    <option value="faup" {{if eq .Order "faup" }}selected{{end}}>First album, new-old</option>
+                    <option value="perup" {{if eq .Order "perup" }}selected{{end}}>Latest performance, new-old</option>
+                </select>
+                <br><br>
+
+                <b>Artist type</b><br>
+                <label>
+                    <input type="checkbox" name="band" {{if .BandCheck}}checked{{end}}> Band
+                </label>
+                <label>
+                    <input type="checkbox" name="solo" {{if .SoloCheck}}checked{{end}}> Solo act
+                </label><br><br>
+
+                <b>Starting year</b><br>
+                <div>
+                    <div style="display: inline-block">
+                        <label>
+                            From: <input type="number" name="fomin" value="{{.CreMin}}" min="1950" max="2024" />
+                        </label>
+                    </div>
+                    <div style="display: inline-block">
+                        <label>
+                            &nbsp;&nbsp;To: <input type="number" name="fomax" value="{{.CreMax}}" min="1950"
+                                max="2024" />
+                        </label>
+                    </div>
+                </div><br>
+
+                <b>First album release</b><br>
+                <div>
+                    <div style="display: inline-block">
+                        <label>
+                            From: <input type="number" name="famin" value="{{.FiAlMin}}" min="1950" max="2024" />
+                        </label>
+                    </div>
+                    <div style="display: inline-block">
+                        <label>
+                            &nbsp;&nbsp;To: <input type="number" name="famax" value="{{.FiAlMax}}" min="1950"
+                                max="2024" />
+                        </label>
+                    </div>
+                </div><br>
+
+                <b>Most recent performance</b><br>
+                <div>
+                    <div style="display: inline-block">
+                        <label>
+                            From: <input type="number" name="pemin" value="{{.PeMin}}" min="1950" max="2024" />
+                        </label>
+                    </div>
+                    <div style="display: inline-block">
+                        <label>
+                            &nbsp;&nbsp;To: <input type="number" name="pemax" value="{{.PeMax}}" min="1950"
+                                max="2024" />
+                        </label>
+                    </div>
+                </div><br>
+
+                <b>Countries visited</b><br>
+                <label><input type="checkbox" name="all">All </label><label><input type="checkbox" name="none">
+                    None</label><br><br>
+                <div class="country-checkboxes">
+                    <label><input type="checkbox" name="Argentina" {{if index .Countries 0}}checked{{end}}>
+                        Argentina</label>
+                    <label><input type="checkbox" name="Australia" {{if index .Countries 1}}checked{{end}}>
+                        Australia</label>
+                    <label><input type="checkbox" name="Austria" {{if index .Countries 2}}checked{{end}}>
+                        Austria</label>
+                    <label><input type="checkbox" name="Belarus" {{if index .Countries 3}}checked{{end}}>
+                        Belarus</label>
+                    <label><input type="checkbox" name="Belgium" {{if index .Countries 4}}checked{{end}}>
+                        Belgium</label>
+                    <label><input type="checkbox" name="Brazil" {{if index .Countries 5}}checked{{end}}> Brazil</label>
+                    <label><input type="checkbox" name="Canada" {{if index .Countries 6}}checked{{end}}> Canada</label>
+                    <label><input type="checkbox" name="Chile" {{if index .Countries 7}}checked{{end}}> Chile</label>
+                    <label><input type="checkbox" name="China" {{if index .Countries 8}}checked{{end}}> China</label>
+                    <label><input type="checkbox" name="Colombia" {{if index .Countries 9}}checked{{end}}>
+                        Colombia</label>
+
+                    <label><input type="checkbox" name="Costa Rica" {{if index .Countries 10}}checked{{end}}> Costa
+                        Rica</label>
+                    <label><input type="checkbox" name="Czechia" {{if index .Countries 11}}checked{{end}}>
+                        Czechia</label>
+                    <label><input type="checkbox" name="Denmark" {{if index .Countries 12}}checked{{end}}>
+                        Denmark</label>
+                    <label><input type="checkbox" name="Finland" {{if index .Countries 13}}checked{{end}}>
+                        Finland</label>
+                    <label><input type="checkbox" name="France" {{if index .Countries 14}}checked{{end}}> France</label>
+                    <label><input type="checkbox" name="French Polynesia" {{if index .Countries 15}}checked{{end}}>
+                        French
+                        Polynesia</label>
+                    <label><input type="checkbox" name="Germany" {{if index .Countries 16}}checked{{end}}>
+                        Germany</label>
+                    <label><input type="checkbox" name="Greece" {{if index .Countries 17}}checked{{end}}> Greece</label>
+                    <label><input type="checkbox" name="Hungary" {{if index .Countries 18}}checked{{end}}>
+                        Hungary</label>
+                    <label><input type="checkbox" name="India" {{if index .Countries 19}}checked{{end}}> India</label>
+
+                    <label><input type="checkbox" name="Indonesia" {{if index .Countries 20}}checked{{end}}>
+                        Indonesia</label>
+                    <label><input type="checkbox" name="Ireland" {{if index .Countries 21}}checked{{end}}>
+                        Ireland</label>
+                    <label><input type="checkbox" name="Italy" {{if index .Countries 22}}checked{{end}}> Italy</label>
+                    <label><input type="checkbox" name="Japan" {{if index .Countries 23}}checked{{end}}> Japan</label>
+                    <label><input type="checkbox" name="Mexico" {{if index .Countries 24}}checked{{end}}> Mexico</label>
+                    <label><input type="checkbox" name="Netherlands" {{if index .Countries 25}}checked{{end}}>
+                        Netherlands</label>
+                    <label><input type="checkbox" name="Netherlands Antilles" {{if index .Countries 26}}checked{{end}}>
+                        Netherlands Antilles</label>
+                    <label><input type="checkbox" name="New Caledonia" {{if index .Countries 27}}checked{{end}}> New
+                        Caledonia</label>
+                    <label><input type="checkbox" name="New Zealand" {{if index .Countries 28}}checked{{end}}> New
+                        Zealand</label>
+                    <label><input type="checkbox" name="Norway" {{if index .Countries 29}}checked{{end}}> Norway</label>
+
+                    <label><input type="checkbox" name="Peru" {{if index .Countries 30}}checked{{end}}> Peru</label>
+                    <label><input type="checkbox" name="Philippines" {{if index .Countries 31}}checked{{end}}>
+                        Philippines</label>
+                    <label><input type="checkbox" name="Poland" {{if index .Countries 32}}checked{{end}}> Poland</label>
+                    <label><input type="checkbox" name="Portugal" {{if index .Countries 33}}checked{{end}}>
+                        Portugal</label>
+                    <label><input type="checkbox" name="Qatar" {{if index .Countries 34}}checked{{end}}> Qatar</label>
+                    <label><input type="checkbox" name="Romania" {{if index .Countries 35}}checked{{end}}>
+                        Romania</label>
+                    <label><input type="checkbox" name="Saudi Arabia" {{if index .Countries 36}}checked{{end}}> Saudi
+                        Arabia</label>
+                    <label><input type="checkbox" name="Slovakia" {{if index .Countries 37}}checked{{end}}>
+                        Slovakia</label>
+                    <label><input type="checkbox" name="South Korea" {{if index .Countries 38}}checked{{end}}> South
+                        Korea</label>
+                    <label><input type="checkbox" name="Spain" {{if index .Countries 39}}checked{{end}}> Spain</label>
+
+                    <label><input type="checkbox" name="Sweden" {{if index .Countries 40}}checked{{end}}> Sweden</label>
+                    <label><input type="checkbox" name="Switzerland" {{if index .Countries 41}}checked{{end}}>
+                        Switzerland</label>
+                    <label><input type="checkbox" name="Taiwan" {{if index .Countries 42}}checked{{end}}> Taiwan</label>
+                    <label><input type="checkbox" name="Thailand" {{if index .Countries 43}}checked{{end}}>
+                        Thailand</label>
+                    <label><input type="checkbox" name="UK" {{if index .Countries 44}}checked{{end}}> UK</label>
+                    <label><input type="checkbox" name="USA" {{if index .Countries 45}}checked{{end}}> USA</label>
+                    <label><input type="checkbox" name="United Arab Emirates" {{if index .Countries 46}}checked{{end}}>
+                        United
+                        Arab Emirates</label>
+                </div>
+                <br><br>
+
+                <button type="submit">Apply filter</button><br><br>
+            </form>
+        </div>
+
+        <!-- Main window with artist Info -->
+        <div class="content">
+
+            <h1>Artists</h1>
+            {{len .Artists}} results
+            <div class="artistcolumn">
+                {{range .Artists}}
+
+                <div class="artistbox">
+                    <div class="title-row">
+                        <img src="{{.Image}}" alt="{{.Name}} Image" class="artist-image">
+                        <h3>{{.Name}}</h3>
+                    </div>
+
+                    <div class="info-column">
+                        Started in {{.CreDate}}
+                        <b>Members:</b>
+                        {{range .Members}}
+                        {{.}}<br>
+                        {{end}}
+                        <b>First album release:</b>
+                        {{.FAString}}
+                        <b>Concerts:</b>
+                        {{range .Gigs}}
+                        {{.DateStr}} {{.Locale}}, {{.Country}}<br>
+                        {{end}}
+                    </div>
+                </div>
+
+                {{end}}
+            </div>
+
+        </div>
+    </div>
+</body>
+
+</html>

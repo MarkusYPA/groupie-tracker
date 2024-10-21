@@ -1,0 +1,81 @@
+body {
+    /*     font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";*/
+    font-family: system-ui;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 280px;
+    background-color: #f4f4f4;
+    padding: 20px;
+    overflow-y: auto;
+    /* Allow scrolling inside the sidebar */
+}
+
+.content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    /* Independent scrolling in the main window */
+}
+
+.country-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+}
+
+.country-checkboxes label {
+    display: flex;
+    align-items: center;
+    min-width: 180px;
+}
+
+.artistcolumn {
+    display: flex;
+    flex-direction: column;
+}
+
+.artistbox {
+    display: flex;
+    flex-direction: column;
+    margin: 30px;
+    
+}
+
+.artistbox b {
+    margin-top: 15px;
+    margin-bottom: 3px;
+}
+
+.artist-image {
+    /* 240 by 240 */
+    /* max-width:240px; */
+    width: 240px;
+    margin-right: 40px;
+}
+
+.title-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: rgb(208, 208, 208);
+}
+
+.title-row:hover {
+    background-color: #a8a8a8;
+  }
+
+.info-column {
+    display: flex;
+    flex-direction: column;
+    /* border: 1px solid black; */
+    padding: 25px;
+    background-color: rgb(230, 230, 230);
+}
