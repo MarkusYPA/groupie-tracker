@@ -5,14 +5,20 @@ body {
     padding: 0;
 }
 
+h3 {
+    font-size: 1.17em;
+    transition: 0.2s ease-out;
+}
+
 .container {
     display: flex;
     height: 100vh;
+    background-color: #e7e7e7;
 }
 
 .sidebar {
     width: 280px;
-    background-color: #f4f4f4;
+    background-color: #c1c1c1;
     padding: 20px;
     overflow-y: auto;
     /* Allow scrolling inside the sidebar */
@@ -45,8 +51,9 @@ body {
 .artistbox {
     display: flex;
     flex-direction: column;
-    margin: 30px;
-
+    margin: 10px 30px;
+    border-radius: 10px;  
+    box-shadow: 6px 8px 10px rgba(104, 104, 104, 0.244);
 }
 
 .artistbox b {
@@ -56,9 +63,10 @@ body {
 
 .artist-image {
     /* 240 by 240 */
-    max-width: 240px;
-    /* width: 240px; */
-    margin-right: 40px;
+    /* max-width: 240px; */
+    width: 120px;
+    margin-right: 160px;
+    transition: 0.2s ease-out;
 }
 
 .title-row {
@@ -77,7 +85,8 @@ body {
     flex-direction: column;
     /* border: 1px solid black; */
     padding: 25px;
-    background-color: rgb(230, 230, 230);
+    background-color: rgb(211, 211, 211);
+    border-radius: 0px 0px 10px 10px;
 }
 
 
@@ -87,15 +96,19 @@ body {
 .collapsible {
     cursor: pointer;
     width: 100%;
+    height: 60px;
+    overflow: hidden;
     border: none;
 
     display: flex;
     flex-direction: row;
     align-items: center;
     background-color: rgb(208, 208, 208);
+    border-radius: 10px;        
+    transition: 0.2s ease-out;
 }
 
-/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+/* Background color to the button when clicked (.active class with JS), and hover */
 .active,
 .collapsible:hover {
     background-color: #b7b7b7;
