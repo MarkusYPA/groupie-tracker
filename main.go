@@ -148,9 +148,7 @@ func createFilter(r *http.Request) filter {
 
 	countries := make([]bool, len(allCountries))
 	for i, c := range allCountries {
-		if r.FormValue(c) == "on" {
-			countries[i] = true
-		}
+		countries[i] = (r.FormValue(c) == "on" || r.Method == http.MethodGet)
 	}
 
 	// Default if no form submission (first load)
