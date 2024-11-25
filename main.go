@@ -146,9 +146,6 @@ func createFilter(r *http.Request) filter {
 		peMax = peMin
 	}
 
-	allON := r.FormValue("all") == "on"
-	noneON := r.FormValue("none") == "on"
-
 	countries := make([]bool, len(allCountries))
 	for i, c := range allCountries {
 		if r.FormValue(c) == "on" {
@@ -167,20 +164,6 @@ func createFilter(r *http.Request) filter {
 		fAMax = 2024
 		peMin = 1950
 		peMax = 2024
-		allON = true
-		noneON = false
-	}
-
-	if noneON {
-		for i := 0; i < len(countries); i++ {
-			countries[i] = false
-		}
-	}
-
-	if allON {
-		for i := 0; i < len(countries); i++ {
-			countries[i] = true
-		}
 	}
 
 	return filter{

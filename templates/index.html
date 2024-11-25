@@ -18,7 +18,7 @@
             <h1>Filter</h1>
             <form method="POST" action="/">
 
-                <button type="submit">Apply filter</button><br><br>
+                <!-- <button type="submit">Apply filter</button><br><br> -->
 
                 <label for="order">Order by:</label>
                 <select name="order" id="order">
@@ -88,94 +88,142 @@
                 </div><br>
 
                 <b>Countries visited</b><br>
-                <label><input type="checkbox" name="all">All </label><label><input type="checkbox" name="none">
-                    None</label><br><br>
+                <label><button id="checkAll" name="all">Select All</button></label>
+                <label><button id="uncheckAll" name="all">Unselect All</button></label>
+                <br><br>
                 <div class="country-checkboxes">
-                    <label><input type="checkbox" name="Argentina" {{if index .Countries 0}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="Argentina" {{if index .Countries
+                            0}}checked{{end}}>
                         Argentina</label>
-                    <label><input type="checkbox" name="Australia" {{if index .Countries 1}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="Australia" {{if index .Countries
+                            1}}checked{{end}}>
                         Australia</label>
-                    <label><input type="checkbox" name="Austria" {{if index .Countries 2}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="Austria" {{if index .Countries
+                            2}}checked{{end}}>
                         Austria</label>
-                    <label><input type="checkbox" name="Belarus" {{if index .Countries 3}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="Belarus" {{if index .Countries
+                            3}}checked{{end}}>
                         Belarus</label>
-                    <label><input type="checkbox" name="Belgium" {{if index .Countries 4}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="Belgium" {{if index .Countries
+                            4}}checked{{end}}>
                         Belgium</label>
-                    <label><input type="checkbox" name="Brazil" {{if index .Countries 5}}checked{{end}}> Brazil</label>
-                    <label><input type="checkbox" name="Canada" {{if index .Countries 6}}checked{{end}}> Canada</label>
-                    <label><input type="checkbox" name="Chile" {{if index .Countries 7}}checked{{end}}> Chile</label>
-                    <label><input type="checkbox" name="China" {{if index .Countries 8}}checked{{end}}> China</label>
-                    <label><input type="checkbox" name="Colombia" {{if index .Countries 9}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="Brazil" {{if index .Countries
+                            5}}checked{{end}}> Brazil</label>
+                    <label><input type="checkbox" class="countryCB" name="Canada" {{if index .Countries
+                            6}}checked{{end}}> Canada</label>
+                    <label><input type="checkbox" class="countryCB" name="Chile" {{if index .Countries
+                            7}}checked{{end}}> Chile</label>
+                    <label><input type="checkbox" class="countryCB" name="China" {{if index .Countries
+                            8}}checked{{end}}> China</label>
+                    <label><input type="checkbox" class="countryCB" name="Colombia" {{if index .Countries
+                            9}}checked{{end}}>
                         Colombia</label>
 
-                    <label><input type="checkbox" name="Costa Rica" {{if index .Countries 10}}checked{{end}}> Costa
+                    <label><input type="checkbox" class="countryCB" name="Costa Rica" {{if index .Countries
+                            10}}checked{{end}}> Costa
                         Rica</label>
-                    <label><input type="checkbox" name="Czechia" {{if index .Countries 11}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="Czechia" {{if index .Countries
+                            11}}checked{{end}}>
                         Czechia</label>
-                    <label><input type="checkbox" name="Denmark" {{if index .Countries 12}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="Denmark" {{if index .Countries
+                            12}}checked{{end}}>
                         Denmark</label>
-                    <label><input type="checkbox" name="Finland" {{if index .Countries 13}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="Finland" {{if index .Countries
+                            13}}checked{{end}}>
                         Finland</label>
-                    <label><input type="checkbox" name="France" {{if index .Countries 14}}checked{{end}}> France</label>
-                    <label><input type="checkbox" name="French Polynesia" {{if index .Countries 15}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="France" {{if index .Countries
+                            14}}checked{{end}}> France</label>
+                    <label><input type="checkbox" class="countryCB" name="French Polynesia" {{if index .Countries
+                            15}}checked{{end}}>
                         French
                         Polynesia</label>
-                    <label><input type="checkbox" name="Germany" {{if index .Countries 16}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="Germany" {{if index .Countries
+                            16}}checked{{end}}>
                         Germany</label>
-                    <label><input type="checkbox" name="Greece" {{if index .Countries 17}}checked{{end}}> Greece</label>
-                    <label><input type="checkbox" name="Hungary" {{if index .Countries 18}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="Greece" {{if index .Countries
+                            17}}checked{{end}}> Greece</label>
+                    <label><input type="checkbox" class="countryCB" name="Hungary" {{if index .Countries
+                            18}}checked{{end}}>
                         Hungary</label>
-                    <label><input type="checkbox" name="India" {{if index .Countries 19}}checked{{end}}> India</label>
+                    <label><input type="checkbox" class="countryCB" name="India" {{if index .Countries
+                            19}}checked{{end}}> India</label>
 
-                    <label><input type="checkbox" name="Indonesia" {{if index .Countries 20}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="Indonesia" {{if index .Countries
+                            20}}checked{{end}}>
                         Indonesia</label>
-                    <label><input type="checkbox" name="Ireland" {{if index .Countries 21}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="Ireland" {{if index .Countries
+                            21}}checked{{end}}>
                         Ireland</label>
-                    <label><input type="checkbox" name="Italy" {{if index .Countries 22}}checked{{end}}> Italy</label>
-                    <label><input type="checkbox" name="Japan" {{if index .Countries 23}}checked{{end}}> Japan</label>
-                    <label><input type="checkbox" name="Mexico" {{if index .Countries 24}}checked{{end}}> Mexico</label>
-                    <label><input type="checkbox" name="Netherlands" {{if index .Countries 25}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="Italy" {{if index .Countries
+                            22}}checked{{end}}> Italy</label>
+                    <label><input type="checkbox" class="countryCB" name="Japan" {{if index .Countries
+                            23}}checked{{end}}> Japan</label>
+                    <label><input type="checkbox" class="countryCB" name="Mexico" {{if index .Countries
+                            24}}checked{{end}}> Mexico</label>
+                    <label><input type="checkbox" class="countryCB" name="Netherlands" {{if index .Countries
+                            25}}checked{{end}}>
                         Netherlands</label>
-                    <label><input type="checkbox" name="Netherlands Antilles" {{if index .Countries 26}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="Netherlands Antilles" {{if index .Countries
+                            26}}checked{{end}}>
                         Netherlands Antilles</label>
-                    <label><input type="checkbox" name="New Caledonia" {{if index .Countries 27}}checked{{end}}> New
+                    <label><input type="checkbox" class="countryCB" name="New Caledonia" {{if index .Countries
+                            27}}checked{{end}}> New
                         Caledonia</label>
-                    <label><input type="checkbox" name="New Zealand" {{if index .Countries 28}}checked{{end}}> New
+                    <label><input type="checkbox" class="countryCB" name="New Zealand" {{if index .Countries
+                            28}}checked{{end}}> New
                         Zealand</label>
-                    <label><input type="checkbox" name="Norway" {{if index .Countries 29}}checked{{end}}> Norway</label>
+                    <label><input type="checkbox" class="countryCB" name="Norway" {{if index .Countries
+                            29}}checked{{end}}> Norway</label>
 
-                    <label><input type="checkbox" name="Peru" {{if index .Countries 30}}checked{{end}}> Peru</label>
-                    <label><input type="checkbox" name="Philippines" {{if index .Countries 31}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="Peru" {{if index .Countries
+                            30}}checked{{end}}> Peru</label>
+                    <label><input type="checkbox" class="countryCB" name="Philippines" {{if index .Countries
+                            31}}checked{{end}}>
                         Philippines</label>
-                    <label><input type="checkbox" name="Poland" {{if index .Countries 32}}checked{{end}}> Poland</label>
-                    <label><input type="checkbox" name="Portugal" {{if index .Countries 33}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="Poland" {{if index .Countries
+                            32}}checked{{end}}> Poland</label>
+                    <label><input type="checkbox" class="countryCB" name="Portugal" {{if index .Countries
+                            33}}checked{{end}}>
                         Portugal</label>
-                    <label><input type="checkbox" name="Qatar" {{if index .Countries 34}}checked{{end}}> Qatar</label>
-                    <label><input type="checkbox" name="Romania" {{if index .Countries 35}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="Qatar" {{if index .Countries
+                            34}}checked{{end}}> Qatar</label>
+                    <label><input type="checkbox" class="countryCB" name="Romania" {{if index .Countries
+                            35}}checked{{end}}>
                         Romania</label>
-                    <label><input type="checkbox" name="Saudi Arabia" {{if index .Countries 36}}checked{{end}}> Saudi
+                    <label><input type="checkbox" class="countryCB" name="Saudi Arabia" {{if index .Countries
+                            36}}checked{{end}}> Saudi
                         Arabia</label>
-                    <label><input type="checkbox" name="Slovakia" {{if index .Countries 37}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="Slovakia" {{if index .Countries
+                            37}}checked{{end}}>
                         Slovakia</label>
-                    <label><input type="checkbox" name="South Korea" {{if index .Countries 38}}checked{{end}}> South
+                    <label><input type="checkbox" class="countryCB" name="South Korea" {{if index .Countries
+                            38}}checked{{end}}> South
                         Korea</label>
-                    <label><input type="checkbox" name="Spain" {{if index .Countries 39}}checked{{end}}> Spain</label>
+                    <label><input type="checkbox" class="countryCB" name="Spain" {{if index .Countries
+                            39}}checked{{end}}> Spain</label>
 
-                    <label><input type="checkbox" name="Sweden" {{if index .Countries 40}}checked{{end}}> Sweden</label>
-                    <label><input type="checkbox" name="Switzerland" {{if index .Countries 41}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="Sweden" {{if index .Countries
+                            40}}checked{{end}}> Sweden</label>
+                    <label><input type="checkbox" class="countryCB" name="Switzerland" {{if index .Countries
+                            41}}checked{{end}}>
                         Switzerland</label>
-                    <label><input type="checkbox" name="Taiwan" {{if index .Countries 42}}checked{{end}}> Taiwan</label>
-                    <label><input type="checkbox" name="Thailand" {{if index .Countries 43}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="Taiwan" {{if index .Countries
+                            42}}checked{{end}}> Taiwan</label>
+                    <label><input type="checkbox" class="countryCB" name="Thailand" {{if index .Countries
+                            43}}checked{{end}}>
                         Thailand</label>
-                    <label><input type="checkbox" name="UK" {{if index .Countries 44}}checked{{end}}> UK</label>
-                    <label><input type="checkbox" name="USA" {{if index .Countries 45}}checked{{end}}> USA</label>
-                    <label><input type="checkbox" name="United Arab Emirates" {{if index .Countries 46}}checked{{end}}>
+                    <label><input type="checkbox" class="countryCB" name="UK" {{if index .Countries 44}}checked{{end}}>
+                        UK</label>
+                    <label><input type="checkbox" class="countryCB" name="USA" {{if index .Countries 45}}checked{{end}}>
+                        USA</label>
+                    <label><input type="checkbox" class="countryCB" name="United Arab Emirates" {{if index .Countries
+                            46}}checked{{end}}>
                         United
                         Arab Emirates</label>
                 </div>
-                <br><br>
+                <br>
 
-                <button type="submit">Apply filter</button><br><br>
+                <!-- <button type="submit">Apply filter</button><br><br> -->
             </form>
         </div>
 
@@ -184,7 +232,7 @@
 
             <h1>Artists</h1>
             {{len .Artists}} results
-            
+
             <div class="artistcolumn">
 
                 {{range .Artists}}
@@ -197,15 +245,15 @@
                         <div class="info-column">
                             <p>Started in {{.CreDate}}</p>
                             <p><b>Members:</b><br>
-                            {{range .Members}}
-                            {{.}}<br>
-                            {{end}}</p>
+                                {{range .Members}}
+                                {{.}}<br>
+                                {{end}}</p>
                             <p><b>First album release:</b><br>
-                            {{.FAString}}</p>
+                                {{.FAString}}</p>
                             <p><b>Concerts:</b><br>
-                            {{range .Gigs}}
-                            {{.DateStr}} {{.Locale}}, {{.Country}}<br>
-                            {{end}}</p>
+                                {{range .Gigs}}
+                                {{.DateStr}} {{.Locale}}, {{.Country}}<br>
+                                {{end}}</p>
                             <p><a href="/artist/{{.Id}}">Artist page</a></p>
                         </div>
                     </div>
@@ -218,9 +266,35 @@
     </div>
 
     <script>
+        /* Make all checkboxes, number inputs and dropdowns submit the form */
+        document.addEventListener("DOMContentLoaded", function () {
+            const inputs = document.querySelectorAll("input[type='checkbox'], input[type='number'], select");
+            inputs.forEach(input => {
+                input.addEventListener("change", function () {
+                    this.form.submit();
+                });
+            });
+        });
+
+        /* "checkAll" checks all countries  */
+        document.getElementById('checkAll').addEventListener('click', () => {
+            const countryChecks = document.querySelectorAll('.countryCB');
+            countryChecks.forEach(checkbox => {
+                checkbox.checked = true;
+            });
+        });
+
+        /* "uncheckAll" unchecks all countries  */
+        document.getElementById('uncheckAll').addEventListener('click', () => {
+            const countryChecks = document.querySelectorAll('.countryCB');
+            countryChecks.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        });
+
+        /* expand the collapsible and reveal the hidden info box, and the reverse */
         var coll = document.getElementsByClassName("collapsible");
         var i;
-
         for (i = 0; i < coll.length; i++) {
             coll[i].addEventListener("click", function () {
                 this.classList.toggle("active");
