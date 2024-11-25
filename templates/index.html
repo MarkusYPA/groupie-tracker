@@ -184,30 +184,10 @@
 
             <h1>Artists</h1>
             {{len .Artists}} results
+            
             <div class="artistcolumn">
+
                 {{range .Artists}}
-
-<!--                 <div class="artistbox">
-                    <div class="title-row">
-                        <img src="{{.Image}}" alt="{{.Name}} Image" class="artist-image">
-                        <h3>{{.Name}}</h3>
-                    </div>
-
-                    <div class="info-column">
-                        Started in {{.CreDate}}
-                        <b>Members:</b>
-                        {{range .Members}}
-                        {{.}}<br>
-                        {{end}}
-                        <b>First album release:</b>
-                        {{.FAString}}
-                        <b>Concerts:</b>
-                        {{range .Gigs}}
-                        {{.DateStr}} {{.Locale}}, {{.Country}}<br>
-                        {{end}}
-                    </div>
-                </div> -->
-
                 <div class="artistbox">
                     <div class="collapsible">
                         <img src="{{.Image}}" alt="{{.Name}} Image" class="artist-image">
@@ -215,17 +195,17 @@
                     </div>
                     <div class="collapse-content">
                         <div class="info-column">
-                            Started in {{.CreDate}}
-                            <b>Members:</b>
+                            <p>Started in {{.CreDate}}</p>
+                            <p><b>Members:</b><br>
                             {{range .Members}}
                             {{.}}<br>
-                            {{end}}
-                            <b>First album release:</b>
-                            {{.FAString}}
-                            <b>Concerts:</b>
+                            {{end}}</p>
+                            <p><b>First album release:</b><br>
+                            {{.FAString}}</p>
+                            <p><b>Concerts:</b><br>
                             {{range .Gigs}}
                             {{.DateStr}} {{.Locale}}, {{.Country}}<br>
-                            {{end}}
+                            {{end}}</p>
                         </div>
                     </div>
                 </div>
