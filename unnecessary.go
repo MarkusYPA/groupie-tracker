@@ -8,22 +8,22 @@ import (
 	"os"
 )
 
+type locIndex struct {
+	Index []locations `json:"index"`
+}
+
 type locations struct {
 	Id      int      `json:"id"`
 	Locales []string `json:"locations"`
 }
 
-type locIndex struct {
-	Index []locations `json:"index"`
+type dtIndex struct {
+	Index []dates `json:"index"`
 }
 
 type dates struct {
 	Id    int      `json:"id"`
 	Dates []string `json:"dates"`
-}
-
-type dtIndex struct {
-	Index []dates `json:"index"`
 }
 
 //dateIndex := fetchDates(apiData.DatesUrl)

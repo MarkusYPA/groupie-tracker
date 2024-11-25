@@ -36,6 +36,7 @@ func fillAllCountries(ais []artistInfo) {
 	}
 }
 
+// beautifyLocation returns the location and country of a concert, written all nicely
 func beautifyLocation(s string) (string, string) {
 	name := ""
 	// separate location and country
@@ -83,6 +84,7 @@ func beautifyLocation(s string) (string, string) {
 	return strings.Split(name, ",")[0], strings.Split(name, ",")[1]
 }
 
+// dateAndGig writes parsed dates, formatted dates and nicely spelled countries and locations to a slice of structs
 func dateAndGig(rels map[string][]string) (dateGig []dateWithGig) {
 	// parse time from string and combine with location
 	for place, sli := range rels {
@@ -109,6 +111,7 @@ func dateAndGig(rels map[string][]string) (dateGig []dateWithGig) {
 	return
 }
 
+// getArtisInfo puts all the API info about an artist to a struct
 func getArtisInfo(art artist, index int, ri relIndex) artistInfo {
 	ai := artistInfo{}
 	ai.Id, ai.Name, ai.Image = art.Id, art.Name, art.Image
@@ -124,8 +127,8 @@ func getArtisInfo(art artist, index int, ri relIndex) artistInfo {
 	return ai
 }
 
+// fetchAPI parses JSON into a Go struct to extract URLs
 func fetchAPI(body []byte) APIResponse {
-	// Parse JSON into Go struct to extract URLs
 	var apiData APIResponse
 	err := json.Unmarshal(body, &apiData)
 	if err != nil {
@@ -158,6 +161,7 @@ func fetchArtists(artistsURL string) []artist {
 	return artists
 }
 
+// Function to fetch data from the "realations" API endpoint
 func fetchRelations(relURL string) relIndex {
 	resp, err := http.Get(relURL)
 	if err != nil {

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Artist.Name}}</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .collapsible {
+            background-color: #b7b7b7;
+            border-radius: 10px 10px 0px 0px;
+            cursor: auto;
+            height: 240px;
+            margin-right: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="artistbox">
+
+            <div class="collapsible">
+                <img src="{{.Artist.Image}}" alt="{{.Artist.Name}} Image" class="artist-image" style="width: 240px;">
+                <h3 style="font-size: 1.5em;">{{.Artist.Name}}</h3>
+            </div>
+
+            <div class="info-column">
+                <p>Started in {{.Artist.CreDate}}</p>
+                <p><b>Members:</b><br>
+                    {{range .Artist.Members}}
+                    {{.}}<br>
+                    {{end}}</p>
+                <p><b>First album release:</b><br>
+                    {{.Artist.FAString}}</p>
+                <p><b>Concerts:</b><br>
+                    {{range .Artist.Gigs}}
+                    {{.DateStr}} {{.Locale}}, {{.Country}}<br>
+                    {{end}}</p>
+
+                <br><br><br>
+                <p><b>Unedited data from API:</b><br>
+                    <br>
+
+                <p><b>First Album:</b><br>
+                    {{.FirstAlbum}}
+                </p>
+
+                <p><b>Members:</b><br>
+                    {{range .Members}}
+                    {{.}}<br>
+                    {{end}}
+                </p>
+
+                <p><b>Locations:</b><br>
+                    {{range .Locations}}
+                    {{.}}<br>
+                    {{end}}
+                </p>
+
+                <p><b>Dates:</b><br>
+                    {{range .Dates}}
+                    {{.}}<br>
+                    {{end}}
+                </p>
+
+                <br>
+                <p><a href="/">Front page</a></p>
+
+            </div>
+            
+        </div>
+    </div>
+</body>
+
+</html>

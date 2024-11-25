@@ -10,6 +10,14 @@ import (
 	"time"
 )
 
+// URLs from the initial API response
+type APIResponse struct {
+	ArtistsUrl   string `json:"artists"`
+	LocationsUrl string `json:"locations"`
+	DatesUrl     string `json:"dates"`
+	RelationUrl  string `json:"relation"`
+}
+
 type artist struct {
 	Id         int      `json:"id"`
 	Image      string   `json:"image"`
@@ -21,21 +29,13 @@ type artist struct {
 	Relations  string   `json:"relations"`
 }
 
-type relations struct {
-	Id             int                 `json:"id"`
-	DatesLocations map[string][]string `json:"datesLocations"`
-}
-
 type relIndex struct {
 	Index []relations `json:"index"`
 }
 
-// URLs from the initial API response
-type APIResponse struct {
-	ArtistsUrl   string `json:"artists"`
-	LocationsUrl string `json:"locations"`
-	DatesUrl     string `json:"dates"`
-	RelationUrl  string `json:"relation"`
+type relations struct {
+	Id             int                 `json:"id"`
+	DatesLocations map[string][]string `json:"datesLocations"`
 }
 
 type dateWithGig struct {
@@ -80,7 +80,21 @@ type PageData struct {
 	Artists   []artistInfo
 }
 
-var allCountries []string
+type ArtisPageData struct {
+	Artist     artistInfo
+	Members    []string
+	FirstAlbum string
+	Locations  []string
+	Dates      []string
+}
+
+var (
+	allCountries  []string
+	apiData       APIResponse
+	artists       []artist
+	relationIndex relIndex
+	artInfos      []artistInfo
+)
 
 // artistInformation combines the API information from artists and relations
 func artistInformation(artists []artist, rI relIndex) []artistInfo {
@@ -110,8 +124,8 @@ func pageDataValues(f filter, ais []artistInfo) PageData {
 	return data
 }
 
-// filterValues places the user's selections to a filter
-func filterValues(r *http.Request) filter {
+// createFilter places the user's selections to a filter
+func createFilter(r *http.Request) filter {
 
 	ord := r.FormValue("order")
 	showBand := r.FormValue("band") == "on"
@@ -213,11 +227,11 @@ func filterBy(fil filter, arInfos []artistInfo) []artistInfo {
 			for _, g := range ai.Gigs {
 				if g.Country == cn {
 					found = true
-					break
+					break // from inner loop
 				}
 			}
 			if found {
-				break
+				break //
 			}
 		}
 
@@ -265,8 +279,8 @@ func sortArtists(as *[]artistInfo, ord string) {
 	}
 }
 
-// handler for the homepage
-func handler(w http.ResponseWriter, r *http.Request) {
+func readAPI(w http.ResponseWriter) {
+
 	resp, err := http.Get("https://groupietrackers.herokuapp.com/api")
 	if err != nil {
 		http.Error(w, "Failed to fetch data", http.StatusInternalServerError)
@@ -281,13 +295,18 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	apiData := fetchAPI(body)
-	artists := fetchArtists(apiData.ArtistsUrl)
-	relationIndex := fetchRelations(apiData.RelationUrl)
-	artInfos := artistInformation(artists, relationIndex)
+	apiData = fetchAPI(body)
+	artists = fetchArtists(apiData.ArtistsUrl)
+	relationIndex = fetchRelations(apiData.RelationUrl)
+	artInfos = artistInformation(artists, relationIndex)
 	fillAllCountries(artInfos)
+}
 
-	flt := filterValues(r)
+// handler for the homepage
+func handler(w http.ResponseWriter, r *http.Request) {
+	readAPI(w)
+
+	flt := createFilter(r)
 	toDisplay := filterBy(flt, artInfos)
 	data := pageDataValues(flt, toDisplay)
 
@@ -295,11 +314,54 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, data)
 }
 
+// artistHandler serves a site for a specific artist
+func artistHandler(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Path[len("/artist/"):]
+	artistID, err := strconv.Atoi(id)
+	if err != nil {
+		fmt.Println("Error parsing id:", id)
+		http.Error(w, "Invalid artist ID", http.StatusBadRequest)
+		return
+	}
+	readAPI(w)
+
+	var data ArtisPageData
+	for _, ai := range artInfos {
+		if ai.Id == artistID {
+			data.Artist = ai
+		}
+	}
+
+	for _, d := range fetchDates(apiData.DatesUrl).Index {
+		if d.Id == artistID {
+			data.Dates = d.Dates
+		}
+	}
+
+	for _, l := range fetchLocations(apiData.LocationsUrl).Index {
+		if l.Id == artistID {
+			data.Locations = l.Locales
+		}
+	}
+
+	for _, a := range artists {
+		if a.Id == artistID {
+			data.Members = a.Members
+			data.FirstAlbum = a.FirstAlbum
+		}
+	}
+
+	t := template.Must(template.ParseFiles("templates/artistpage.html"))
+	t.Execute(w, data)
+}
+
 func main() {
 	fileServer := http.FileServer(http.Dir("./static"))
-	http.Handle("/static/", http.StripPrefix("/static/", fileServer))
 
+	http.Handle("/static/styles.css", http.StripPrefix("/static/", fileServer))
 	http.HandleFunc("/", handler)
+	http.HandleFunc("/artist/", artistHandler)
+
 	fmt.Println("Server is running on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
