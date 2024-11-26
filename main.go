@@ -94,6 +94,8 @@ var (
 	artists       []artist
 	relationIndex relIndex
 	artInfos      []artistInfo
+	firstLoad     bool = true
+	flt           filter
 )
 
 // artistInformation combines the API information from artists and relations
@@ -124,9 +126,8 @@ func pageDataValues(f filter, ais []artistInfo) PageData {
 	return data
 }
 
-// createFilter places the user's selections to a filter
-func createFilter(r *http.Request) filter {
-
+// newFilter places the user's selections to a filter
+func newFilter(r *http.Request) filter {
 	ord := r.FormValue("order")
 	showBand := r.FormValue("band") == "on"
 	showSolo := r.FormValue("solo") == "on"
@@ -151,18 +152,33 @@ func createFilter(r *http.Request) filter {
 		countries[i] = (r.FormValue(c) == "on" || r.Method == http.MethodGet)
 	}
 
-	// Default if no form submission (first load)
-	if r.Method == http.MethodGet || formMin == 0 || formMax == 0 || fAMin == 0 || fAMax == 0 || peMin == 0 || peMax == 0 {
-		ord = "namedown"
-		showBand = true
-		showSolo = true
-		formMin = 1950
-		formMax = 2024
-		fAMin = 1950
-		fAMax = 2024
-		peMin = 1950
-		peMax = 2024
+	return filter{
+		order:     ord,
+		created:   [2]int{formMin, formMax},
+		firstAl:   [2]int{fAMin, fAMax},
+		recPerf:   [2]int{peMin, peMax},
+		band:      showBand,
+		solo:      showSolo,
+		countries: countries,
 	}
+}
+
+func defaultFilter(r *http.Request) filter {
+
+	countries := make([]bool, len(allCountries))
+	for i := range allCountries {
+		countries[i] = true
+	}
+
+	ord := "namedown"
+	showBand := true
+	showSolo := true
+	formMin := 1950
+	formMax := 2024
+	fAMin := 1950
+	fAMax := 2024
+	peMin := 1950
+	peMax := 2024
 
 	return filter{
 		order:     ord,
@@ -284,10 +300,22 @@ func readAPI(w http.ResponseWriter) {
 }
 
 // handler for the homepage
-func handler(w http.ResponseWriter, r *http.Request) {
-	readAPI(w)
+func homeHandler(w http.ResponseWriter, r *http.Request) {
 
-	flt := createFilter(r)
+	if firstLoad {
+		readAPI(w)
+		flt = defaultFilter(r)
+		firstLoad = false
+	}
+
+	if r.Method == http.MethodPost && r.FormValue("reset") != "rd" {
+		flt = newFilter(r)
+	}
+
+	if r.FormValue("reset") == "rd" {
+		flt = defaultFilter(r)
+	}
+
 	toDisplay := filterBy(flt, artInfos)
 	data := pageDataValues(flt, toDisplay)
 
@@ -304,43 +332,43 @@ func artistHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid artist ID", http.StatusBadRequest)
 		return
 	}
-	readAPI(w)
+	//readAPI(w)		// Only necessary on first Get?
 
-	var data ArtisPageData
+	var dataAP ArtisPageData
 	for _, ai := range artInfos {
 		if ai.Id == artistID {
-			data.Artist = ai
+			dataAP.Artist = ai
 		}
 	}
 
 	for _, d := range fetchDates(apiData.DatesUrl).Index {
 		if d.Id == artistID {
-			data.Dates = d.Dates
+			dataAP.Dates = d.Dates
 		}
 	}
 
 	for _, l := range fetchLocations(apiData.LocationsUrl).Index {
 		if l.Id == artistID {
-			data.Locations = l.Locales
+			dataAP.Locations = l.Locales
 		}
 	}
 
 	for _, a := range artists {
 		if a.Id == artistID {
-			data.Members = a.Members
-			data.FirstAlbum = a.FirstAlbum
+			dataAP.Members = a.Members
+			dataAP.FirstAlbum = a.FirstAlbum
 		}
 	}
 
 	t := template.Must(template.ParseFiles("templates/artistpage.html"))
-	t.Execute(w, data)
+	t.Execute(w, dataAP)
 }
 
 func main() {
 	fileServer := http.FileServer(http.Dir("./static"))
 
 	http.Handle("/static/styles.css", http.StripPrefix("/static/", fileServer))
-	http.HandleFunc("/", handler)
+	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/artist/", artistHandler)
 
 	fmt.Println("Server is running on :8080")

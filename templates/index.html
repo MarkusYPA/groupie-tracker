@@ -19,6 +19,7 @@
             <form method="POST" action="/">
 
                 <!-- <button type="submit">Apply filter</button><br><br> -->
+                <button type="submit" name="reset" value="rd">Reset to defaults</button><br><br>
 
                 <label for="order">Order by:</label>
                 <select name="order" id="order">
@@ -88,8 +89,8 @@
                 </div><br>
 
                 <b>Countries visited</b><br>
-                <label><button id="checkAll" name="all">Select All</button></label>
-                <label><button id="uncheckAll" name="all">Unselect All</button></label>
+                <button id="checkAll" name="all">Select All</button>
+                <button id="uncheckAll" name="all">Unselect All</button>
                 <br><br>
                 <div class="country-checkboxes">
                     <label><input type="checkbox" class="countryCB" name="Argentina" {{if index .Countries
@@ -267,7 +268,7 @@
 
     <script>
         /* Make all checkboxes, number inputs and dropdowns submit the form */
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function () {   // Makes the script run only after html content is loaded
             const inputs = document.querySelectorAll("input[type='checkbox'], input[type='number'], select");
             inputs.forEach(input => {
                 input.addEventListener("change", function () {
