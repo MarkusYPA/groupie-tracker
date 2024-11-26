@@ -8,27 +8,29 @@ import (
 	"os"
 )
 
+// Raw location data from API
 type locIndex struct {
 	Index []locations `json:"index"`
 }
 
+// Stores data for locIndex, also straight from API
 type locations struct {
 	Id      int      `json:"id"`
 	Locales []string `json:"locations"`
 }
 
+// Raw date data from API
 type dtIndex struct {
 	Index []dates `json:"index"`
 }
 
+// Stores data for dtIndex, also straight from API
 type dates struct {
 	Id    int      `json:"id"`
 	Dates []string `json:"dates"`
 }
 
-//dateIndex := fetchDates(apiData.DatesUrl)
-//locationIndex := fetchLocations(apiData.LocationsUrl)
-
+// Function to fetch data from the "dates" API endpoint
 func fetchDates(dateURL string) dtIndex {
 	resp, err := http.Get(dateURL)
 	if err != nil {
@@ -53,6 +55,7 @@ func fetchDates(dateURL string) dtIndex {
 	return dates
 }
 
+// Function to fetch data from the "locations" API endpoint
 func fetchLocations(locURL string) locIndex {
 	resp, err := http.Get(locURL)
 	if err != nil {

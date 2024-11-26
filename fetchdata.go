@@ -127,15 +127,14 @@ func getArtisInfo(art artist, index int, ri relIndex) artistInfo {
 	return ai
 }
 
-// fetchAPI parses JSON into a Go struct to extract URLs
-func fetchAPI(body []byte) APIResponse {
-	var apiData APIResponse
-	err := json.Unmarshal(body, &apiData)
-	if err != nil {
-		log.Fatalln("Error parsing API JSON", err)
-	}
+// artistInformation combines the API information from artists and relations
+func artistInformation(artists []artist, rI relIndex) []artistInfo {
+	artInfos := []artistInfo{}
+	for i := 0; i < len(artists); i++ {
+		artInfos = append(artInfos, getArtisInfo(artists[i], i, rI))
 
-	return apiData
+	}
+	return artInfos
 }
 
 // Function to fetch data from the "artists" API endpoint
@@ -161,7 +160,7 @@ func fetchArtists(artistsURL string) []artist {
 	return artists
 }
 
-// Function to fetch data from the "realations" API endpoint
+// Function to fetch data from the "relations" API endpoint
 func fetchRelations(relURL string) relIndex {
 	resp, err := http.Get(relURL)
 	if err != nil {
@@ -182,4 +181,37 @@ func fetchRelations(relURL string) relIndex {
 	}
 
 	return rels
+}
+
+// fetchAPI parses JSON into a Go struct to extract URLs
+func fetchAPI(body []byte) APIResponse {
+	var apiData APIResponse
+	err := json.Unmarshal(body, &apiData)
+	if err != nil {
+		log.Fatalln("Error parsing API JSON", err)
+	}
+	return apiData
+}
+
+// readAPI gets the data from the given API and stores it into some global variables
+func readAPI(w http.ResponseWriter) {
+	resp, err := http.Get("https://groupietrackers.herokuapp.com/api")
+	if err != nil {
+		http.Error(w, "Failed to fetch data", http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	// Read the response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		http.Error(w, "Error reading response", http.StatusInternalServerError)
+		return
+	}
+
+	apiData = fetchAPI(body)
+	artists = fetchArtists(apiData.ArtistsUrl)
+	relationIndex = fetchRelations(apiData.RelationUrl)
+	artInfos = artistInformation(artists, relationIndex)
+	fillAllCountries(artInfos)
 }
