@@ -5,6 +5,38 @@ import (
 	"strconv"
 )
 
+// getMinMax retrieves the minimun and maximum values for three ranges in the filter
+func getMinMax() (int, int, int, int, int, int) {
+	formMin, formMax, fAMin, fAMax, peMin, peMax := 1950, 2024, 1950, 2024, 1950, 2024
+	if len(artInfos) > 0 {
+		formMin, formMax, fAMin, fAMax = artInfos[0].CreDate, artInfos[0].CreDate, artInfos[0].FirstAlbum.Year(), artInfos[0].FirstAlbum.Year()
+		peMin, peMax = artInfos[0].Gigs[0].Date.Year(), artInfos[0].Gigs[0].Date.Year()
+	}
+	for _, ai := range artInfos {
+		if ai.CreDate < formMin {
+			formMin = ai.CreDate
+		}
+		if ai.CreDate > formMax {
+			formMax = ai.CreDate
+		}
+		if ai.FirstAlbum.Year() < fAMin {
+			fAMin = ai.FirstAlbum.Year()
+		}
+		if ai.FirstAlbum.Year() > fAMax {
+			fAMax = ai.FirstAlbum.Year()
+		}
+		for _, gig := range ai.Gigs {
+			if gig.Date.Year() < peMin {
+				peMin = ai.Gigs[0].Date.Year()
+			}
+			if gig.Date.Year() > peMax {
+				peMax = ai.Gigs[0].Date.Year()
+			}
+		}
+	}
+	return formMin, formMax, fAMin, fAMax, peMin, peMax
+}
+
 // defaultFilter sets the filter values to default
 func defaultFilter() filter {
 	countries := make([]bool, len(allCountries))
@@ -15,12 +47,8 @@ func defaultFilter() filter {
 	ord := "namedown"
 	showBand := true
 	showSolo := true
-	formMin := 1950
-	formMax := 2024
-	fAMin := 1950
-	fAMax := 2024
-	peMin := 1950
-	peMax := 2024
+	formMin, formMax, fAMin, fAMax, peMin, peMax := getMinMax()
+	minmaxFirst = [6]int{formMin, formMax, fAMin, fAMax, peMin, peMax}
 
 	return filter{
 		order:     ord,
@@ -154,6 +182,7 @@ func filterBy(fil filter, arInfos []artistInfo) []artistInfo {
 
 // pageDataValues formats the data to be sent to the home template
 func homePageDataValues(f filter, ais []artistInfo) HomePageData {
+
 	data := HomePageData{
 		Order:     f.order,
 		BandCheck: f.band,
@@ -166,6 +195,7 @@ func homePageDataValues(f filter, ais []artistInfo) HomePageData {
 		PeMax:     strconv.Itoa(f.recPerf[1]),
 		Countries: f.countries,
 		Artists:   ais,
+		MinMax:    minmaxFirst,
 	}
 	return data
 }

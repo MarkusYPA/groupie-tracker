@@ -1,6 +1,8 @@
 
 To do:
 
+- Generate list of countries automatically
+- GEnerate min and max values automatically
 - Return correct error states
     . Maybe create a custom page to display them
     . 500 especially. Are there 504, 505 etc. errors?

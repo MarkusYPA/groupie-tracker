@@ -84,6 +84,7 @@ type HomePageData struct {
 	PeMax     string
 	Countries []bool
 	Artists   []artistInfo
+	MinMax    [6]int
 }
 
 // Info that gets displayed on the artist page
@@ -103,6 +104,7 @@ var (
 	artInfos      []artistInfo
 	firstLoad     bool = true
 	flt           filter
+	minmaxFirst   [6]int
 )
 
 // handler for the homepage
@@ -123,7 +125,6 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 	toDisplay := filterBy(flt, artInfos)
 	data := homePageDataValues(flt, toDisplay)
-
 	t := template.Must(template.ParseFiles("templates/index.html"))
 	t.Execute(w, data)
 }
