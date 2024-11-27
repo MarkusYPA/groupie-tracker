@@ -183,6 +183,11 @@ func filterBy(fil filter, arInfos []artistInfo) []artistInfo {
 // pageDataValues formats the data to be sent to the home template
 func homePageDataValues(f filter, ais []artistInfo) HomePageData {
 
+	cInfos := []countryInfo{}
+	for i, boo := range f.countries {
+		cInfos = append(cInfos, countryInfo{allCountries[i], boo})
+	}
+
 	data := HomePageData{
 		Order:     f.order,
 		BandCheck: f.band,
@@ -193,7 +198,7 @@ func homePageDataValues(f filter, ais []artistInfo) HomePageData {
 		FiAlMax:   strconv.Itoa(f.firstAl[1]),
 		PeMin:     strconv.Itoa(f.recPerf[0]),
 		PeMax:     strconv.Itoa(f.recPerf[1]),
-		Countries: f.countries,
+		Countries: cInfos,
 		Artists:   ais,
 		MinMax:    minmaxFirst,
 	}

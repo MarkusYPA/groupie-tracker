@@ -71,6 +71,11 @@ type filter struct {
 	countries []bool
 }
 
+type countryInfo struct {
+	Name     string
+	Selected bool
+}
+
 // Filter selections and artistInfos for template to display
 type HomePageData struct {
 	Order     string
@@ -82,7 +87,7 @@ type HomePageData struct {
 	FiAlMax   string
 	PeMin     string
 	PeMax     string
-	Countries []bool
+	Countries []countryInfo
 	Artists   []artistInfo
 	MinMax    [6]int
 }
