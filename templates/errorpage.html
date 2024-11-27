@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Error}}</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .collapsible {
+            background-color: #b7b7b7;
+            border-radius: 10px 10px 0px 0px;
+            cursor: auto;
+            height: 240px;
+            margin-right: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="content">
+            <div class="artistbox">
+
+                <div class="collapsible">
+                     <img src="/static/sad.jpg" alt="Error image" class="artist-image"
+                        style="width: 240px;">
+                    <h3 style="font-size: 1.5em;">Error {{.Error}}</h3>
+                </div>
+
+                <div class="info-column">
+                    <p><b>{{.Error}} {{.Message}}</b><br><br>
+                    {{.Message2}}</p><br>
+
+                    <p><a href="/">Front page</a></p>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

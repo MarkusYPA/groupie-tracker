@@ -3,9 +3,7 @@ package main
 import (
 	"encoding/json"
 	"io"
-	"log"
 	"net/http"
-	"os"
 )
 
 // Raw location data from API
@@ -31,51 +29,49 @@ type dates struct {
 }
 
 // Function to fetch data from the "dates" API endpoint
-func fetchDates(dateURL string) dtIndex {
+func fetchDates(dateURL string) (dtIndex, error) {
+	var dates dtIndex
+
 	resp, err := http.Get(dateURL)
 	if err != nil {
-		log.Println("Failed to fetch dates:", err)
-		os.Exit(1)
+		return dates, err
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error reading dates response:", err)
-		os.Exit(1)
+		return dates, err
 	}
 
 	// Parse JSON into Go struct
-	var dates dtIndex
 	err = json.Unmarshal(body, &dates)
 	if err != nil {
-		panic(err.Error())
+		return dates, err
 	}
 
-	return dates
+	return dates, nil
 }
 
 // Function to fetch data from the "locations" API endpoint
-func fetchLocations(locURL string) locIndex {
+func fetchLocations(locURL string) (locIndex, error) {
+	var locs locIndex
+
 	resp, err := http.Get(locURL)
 	if err != nil {
-		log.Println("Failed to fetch locations:", err)
-		os.Exit(1)
+		return locs, err
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Error reading locations response:", err)
-		os.Exit(1)
+		return locs, err
 	}
 
 	// Parse JSON into Go struct
-	var locs locIndex
 	err = json.Unmarshal(body, &locs)
 	if err != nil {
-		panic(err.Error())
+		return locs, err
 	}
 
-	return locs
+	return locs, nil
 }

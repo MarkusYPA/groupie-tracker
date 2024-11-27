@@ -101,6 +101,12 @@ type ArtisPageData struct {
 	Dates      []string
 }
 
+type ErrorPageData struct {
+	Error    uint
+	Message  string
+	Message2 string
+}
+
 var (
 	allCountries  []string
 	apiData       APIResponse
@@ -110,10 +116,17 @@ var (
 	firstLoad     bool = true
 	flt           filter
 	minmaxFirst   [6]int
+	errorTemplate *template.Template = template.Must(template.ParseFiles("templates/errorpage.html"))
 )
 
 // handler for the homepage
 func homeHandler(w http.ResponseWriter, r *http.Request) {
+
+	if r.URL.Path != "/" {
+		goToErrorPage(http.StatusNotFound, "Not Found", `Page doesn't exist`, w)
+		return
+	}
+
 	if firstLoad {
 		readAPI(w)
 		flt = defaultFilter()
@@ -139,25 +152,46 @@ func artistHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Path[len("/artist/"):]
 	artistID, err := strconv.Atoi(id)
 	if err != nil {
-		fmt.Println("Error parsing id:", id)
-		http.Error(w, "Invalid artist ID", http.StatusBadRequest)
+		goToErrorPage(http.StatusBadRequest, "Bad Request", "Invalid artist ID: "+err.Error(), w)
 		return
 	}
 
+	if len(artInfos) == 0 { // In case someone navigates to an artist page directly
+		readAPI(w)
+	}
+
 	var dataAP ArtisPageData
+	var found bool
 	for _, ai := range artInfos {
 		if ai.Id == artistID {
 			dataAP.Artist = ai
+			found = true
+			break
 		}
 	}
 
-	for _, d := range fetchDates(apiData.DatesUrl).Index {
+	if !found {
+		goToErrorPage(http.StatusNotFound, "Not Found", "Artist "+id+` doesn't exist`, w)
+		return
+	}
+
+	dates, err := fetchDates(apiData.DatesUrl)
+	if err != nil {
+		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error reading dates API: "+err.Error(), w)
+		return
+	}
+	for _, d := range dates.Index {
 		if d.Id == artistID {
 			dataAP.Dates = d.Dates
 		}
 	}
 
-	for _, l := range fetchLocations(apiData.LocationsUrl).Index {
+	locs, err := fetchLocations(apiData.LocationsUrl)
+	if err != nil {
+		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error reading locations API: "+err.Error(), w)
+		return
+	}
+	for _, l := range locs.Index {
 		if l.Id == artistID {
 			dataAP.Locations = l.Locales
 		}
@@ -178,6 +212,7 @@ func main() {
 	fileServer := http.FileServer(http.Dir("./static"))
 
 	http.Handle("/static/styles.css", http.StripPrefix("/static/", fileServer))
+	http.Handle("/static/sad.jpg", http.StripPrefix("/static/", fileServer))
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/artist/", artistHandler)
 

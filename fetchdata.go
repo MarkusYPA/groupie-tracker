@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -118,7 +117,7 @@ func getArtisInfo(art artist, index int, ri relIndex) artistInfo {
 	ai.Members, ai.CreDate = art.Members, art.CreDate
 	albumDate, err := time.Parse("02-01-2006", art.FirstAlbum)
 	if err != nil {
-		log.Fatalln("Error parsing date:", err)
+		fmt.Println("Error parsing date:", err)
 	}
 	ai.FirstAlbum = albumDate
 	ai.FAString = albumDate.Format("January 2, 2006")
@@ -138,66 +137,72 @@ func artistInformation(artists []artist, rI relIndex) []artistInfo {
 }
 
 // Function to fetch data from the "artists" API endpoint
-func fetchArtists(artistsURL string) []artist {
+func fetchArtists(artistsURL string) ([]artist, error) {
 	resp, err := http.Get(artistsURL)
 	if err != nil {
-		log.Fatalln("Failed to fetch artists:", err)
+		return artists, err
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalln("Error reading artists response:", err)
+		return artists, err
 	}
 
 	// Parse JSON into Go struct
 	var artists []artist
 	err = json.Unmarshal(body, &artists)
 	if err != nil {
-		panic(err.Error())
+		return artists, err
 	}
 
-	return artists
+	return artists, nil
 }
 
 // Function to fetch data from the "relations" API endpoint
-func fetchRelations(relURL string) relIndex {
+func fetchRelations(relURL string) (relIndex, error) {
+	var rels relIndex
 	resp, err := http.Get(relURL)
 	if err != nil {
-		log.Fatalln("Failed to fetch relations:", err)
+		return rels, err
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalln("Error reading relations response:", err)
+		return rels, err
 	}
 
 	// Parse JSON into Go struct
-	var rels relIndex
 	err = json.Unmarshal(body, &rels)
 	if err != nil {
-		panic(err.Error())
+		return rels, err
 	}
 
-	return rels
+	return rels, nil
 }
 
 // fetchAPI parses JSON into a Go struct to extract URLs
-func fetchAPI(body []byte) APIResponse {
+func fetchAPI(body []byte) (APIResponse, error) {
 	var apiData APIResponse
 	err := json.Unmarshal(body, &apiData)
-	if err != nil {
-		log.Fatalln("Error parsing API JSON", err)
-	}
-	return apiData
+	return apiData, err
+}
+
+// goToErrorPage handles errors by loading an error page to the user
+func goToErrorPage(errorN int, m1 string, m2 string, w http.ResponseWriter) {
+	w.WriteHeader(errorN)
+	epd := ErrorPageData{uint(errorN), m1, m2}
+	errorTemplate.Execute(w, epd)
 }
 
 // readAPI gets the data from the given API and stores it into some global variables
 func readAPI(w http.ResponseWriter) {
 	resp, err := http.Get("https://groupietrackers.herokuapp.com/api")
 	if err != nil {
-		http.Error(w, "Failed to fetch data", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		epd := ErrorPageData{http.StatusInternalServerError, "Internal Server Error", "Failed to fetch data from API"}
+		errorTemplate.Execute(w, epd)
 		return
 	}
 	defer resp.Body.Close()
@@ -205,13 +210,25 @@ func readAPI(w http.ResponseWriter) {
 	// Read the response body
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		http.Error(w, "Error reading response", http.StatusInternalServerError)
+		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error reading response", w)
 		return
 	}
 
-	apiData = fetchAPI(body)
-	artists = fetchArtists(apiData.ArtistsUrl)
-	relationIndex = fetchRelations(apiData.RelationUrl)
+	apiData, err = fetchAPI(body)
+	if err != nil {
+		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error parsing API JSON: "+err.Error(), w)
+		return
+	}
+	artists, err = fetchArtists(apiData.ArtistsUrl)
+	if err != nil {
+		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error reading artist API: "+err.Error(), w)
+		return
+	}
+	relationIndex, err = fetchRelations(apiData.RelationUrl)
+	if err != nil {
+		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error reading relations API: "+err.Error(), w)
+		return
+	}
 	artInfos = artistInformation(artists, relationIndex)
 	fillAllCountries(artInfos)
 }
