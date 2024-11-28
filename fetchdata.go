@@ -110,8 +110,88 @@ func dateAndGig(rels map[string][]string) (dateGig []dateWithGig) {
 	return
 }
 
+// Function to fetch data from an artists' locations url at the "locations" API endpoint
+func fetchLocation(relURL string) (locations, error) {
+	var loc locations
+	resp, err := http.Get(relURL)
+	if err != nil {
+		return loc, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return loc, err
+	}
+
+	// Parse JSON into Go struct
+	err = json.Unmarshal(body, &loc)
+	if err != nil {
+		return loc, err
+	}
+
+	return loc, nil
+}
+
+// Function to fetch data from an artists' dates url at the "dates" API endpoint
+func fetchDate(relURL string) (dates, error) {
+	var dat dates
+	resp, err := http.Get(relURL)
+	if err != nil {
+		return dat, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return dat, err
+	}
+
+	// Parse JSON into Go struct
+	err = json.Unmarshal(body, &dat)
+	if err != nil {
+		return dat, err
+	}
+
+	return dat, nil
+}
+
+func getGigs(artist artist) ([][2]string, error) {
+	gigs := [][2]string{}
+
+	loc, e2 := fetchLocation(artist.Locations)
+	if e2 != nil {
+		return gigs, e2
+	}
+	dat, e3 := fetchDate(artist.ConcertDates)
+	if e3 != nil {
+		return gigs, e3
+	}
+
+	localeIndex := -1
+	for _, day := range dat.Dates {
+		daymod := day
+		if day[0] == '*' {
+			localeIndex++
+			daymod = day[1:]
+		}
+
+		dat, err := time.Parse("02-01-2006", daymod)
+		if err != nil {
+			fmt.Println("Error parsing date:", err)
+			continue
+		}
+		locale, cou := beautifyLocation(loc.Locales[localeIndex])
+		dateStr := dat.Format("Jan. 2, 2006")
+
+		gigs = append(gigs, [2]string{dateStr, locale + ", " + cou})
+	}
+
+	return gigs, nil
+}
+
 // getArtisInfo puts all the API info about an artist to a struct
-func getArtisInfo(art artist, index int, ri relIndex) artistInfo {
+func getArtisInfo(art artist, index int, ri relIndex) (artistInfo, error) {
 	ai := artistInfo{}
 	ai.Id, ai.Name, ai.Image = art.Id, art.Name, art.Image
 	ai.Members, ai.CreDate = art.Members, art.CreDate
@@ -121,19 +201,24 @@ func getArtisInfo(art artist, index int, ri relIndex) artistInfo {
 	}
 	ai.FirstAlbum = albumDate
 	ai.FAString = albumDate.Format("January 2, 2006")
+
 	ai.Gigs = dateAndGig(ri.Index[index].DatesLocations)
 
-	return ai
+	return ai, nil
 }
 
 // artistInformation combines the API information from artists and relations
-func artistInformation(artists []artist, rI relIndex) []artistInfo {
+func artistInformation(artists []artist, rI relIndex) ([]artistInfo, error) {
 	artInfos := []artistInfo{}
 	for i := 0; i < len(artists); i++ {
-		artInfos = append(artInfos, getArtisInfo(artists[i], i, rI))
+		info, err := getArtisInfo(artists[i], i, rI)
+		if err != nil {
+			return artInfos, err
+		}
+		artInfos = append(artInfos, info)
 
 	}
-	return artInfos
+	return artInfos, nil
 }
 
 // Function to fetch data from the "artists" API endpoint
@@ -200,9 +285,7 @@ func goToErrorPage(errorN int, m1 string, m2 string, w http.ResponseWriter) {
 func readAPI(w http.ResponseWriter) {
 	resp, err := http.Get("https://groupietrackers.herokuapp.com/api")
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		epd := ErrorPageData{http.StatusInternalServerError, "Internal Server Error", "Failed to fetch data from API"}
-		errorTemplate.Execute(w, epd)
+		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Failed to fetch data from API", w)
 		return
 	}
 	defer resp.Body.Close()
@@ -229,6 +312,10 @@ func readAPI(w http.ResponseWriter) {
 		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error reading relations API: "+err.Error(), w)
 		return
 	}
-	artInfos = artistInformation(artists, relationIndex)
+	artInfos, err = artistInformation(artists, relationIndex)
+	if err != nil {
+		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Failed to fetch data from API", w)
+		return
+	}
 	fillAllCountries(artInfos)
 }

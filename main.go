@@ -19,14 +19,15 @@ type APIResponse struct {
 
 // Raw artist data from API
 type artist struct {
-	Id         int      `json:"id"`
-	Image      string   `json:"image"`
-	Name       string   `json:"name"`
-	Members    []string `json:"members"`
-	CreDate    int      `json:"creationDate"`
-	FirstAlbum string   `json:"firstAlbum"`
-	Locations  string   `json:"locations"`
-	Relations  string   `json:"relations"`
+	Id           int      `json:"id"`
+	Image        string   `json:"image"`
+	Name         string   `json:"name"`
+	Members      []string `json:"members"`
+	CreDate      int      `json:"creationDate"`
+	FirstAlbum   string   `json:"firstAlbum"`
+	Locations    string   `json:"locations"`
+	ConcertDates string   `json:"concertDates"`
+	Relations    string   `json:"relations"`
 }
 
 // Raw relation data from API
@@ -94,11 +95,8 @@ type HomePageData struct {
 
 // Info that gets displayed on the artist page
 type ArtisPageData struct {
-	Artist     artistInfo
-	Members    []string
-	FirstAlbum string
-	Locations  []string
-	Dates      []string
+	Artist artistInfo
+	Gigs   [][2]string
 }
 
 type ErrorPageData struct {
@@ -161,47 +159,37 @@ func artistHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var dataAP ArtisPageData
-	var found bool
+	var found1 bool
 	for _, ai := range artInfos {
 		if ai.Id == artistID {
 			dataAP.Artist = ai
-			found = true
+			found1 = true
 			break
 		}
 	}
-
-	if !found {
+	if !found1 {
 		goToErrorPage(http.StatusNotFound, "Not Found", "Artist "+id+` doesn't exist`, w)
 		return
 	}
 
-	dates, err := fetchDates(apiData.DatesUrl)
-	if err != nil {
-		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error reading dates API: "+err.Error(), w)
-		return
-	}
-	for _, d := range dates.Index {
-		if d.Id == artistID {
-			dataAP.Dates = d.Dates
-		}
-	}
-
-	locs, err := fetchLocations(apiData.LocationsUrl)
-	if err != nil {
-		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error reading locations API: "+err.Error(), w)
-		return
-	}
-	for _, l := range locs.Index {
-		if l.Id == artistID {
-			dataAP.Locations = l.Locales
-		}
-	}
-
+	var arti artist
+	var found2 bool
 	for _, a := range artists {
 		if a.Id == artistID {
-			dataAP.Members = a.Members
-			dataAP.FirstAlbum = a.FirstAlbum
+			arti = a
+			found2 = true
+			break
 		}
+	}
+	if !found2 {
+		goToErrorPage(http.StatusNotFound, "Not Found", "Artist "+id+` doesn't exist`, w)
+		return
+	}
+
+	dataAP.Gigs, err = getGigs(arti)
+	if err != nil {
+		goToErrorPage(http.StatusBadRequest, "Bad Request", "Failed to fetch data from API: "+err.Error(), w)
+		return
 	}
 
 	t := template.Must(template.ParseFiles("templates/artistpage.html"))

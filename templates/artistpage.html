@@ -14,6 +14,20 @@
             height: 240px;
             margin-right: 40px;
         }
+
+        .concert-list {
+            border-collapse: collapse;
+        }
+
+        .concert-list td {
+            padding: 0px;
+        }
+
+        .concert-list td.date {
+            width: 0%;
+            padding-right: 2rem;
+            white-space: nowrap;
+        }
     </style>
 </head>
 
@@ -29,43 +43,22 @@
                 </div>
 
                 <div class="info-column">
-                    <p>Started in {{.Artist.CreDate}}</p>
-                    <p><b>Members:</b><br>
+                    <p>Started in {{.Artist.CreDate}}</p><br>
+                    <p><b>Members:</b><br></p>
                         {{range .Artist.Members}}
                         {{.}}<br>
-                        {{end}}</p>
-                    <p><b>First album release:</b><br>
-                        {{.Artist.FAString}}</p>
-                    <p><b>Concerts:</b><br>
-                        {{range .Artist.Gigs}}
-                        {{.DateStr}} {{.Locale}}, {{.Country}}<br>
-                        {{end}}</p>
-
-                    <br><br><br>
-                    <p><b>Unedited data from API:</b><br>
-                        <br>
-
-                    <p><b>First Album:</b><br>
-                        {{.FirstAlbum}}
-                    </p>
-
-                    <p><b>Members:</b><br>
-                        {{range .Members}}
-                        {{.}}<br>
+                        {{end}}<br>
+                    <p><b>First album release:</b><br></p>
+                        {{.Artist.FAString}}<br><br>
+                    <p><b>Concerts:</b>
+                    <table class="concert-list">
+                        {{range .Gigs}}
+                        <tr>
+                            <td class="date">{{index . 0}}</td>
+                            <td class="location">{{index . 1}}</td>
+                        </tr>
                         {{end}}
-                    </p>
-
-                    <p><b>Locations:</b><br>
-                        {{range .Locations}}
-                        {{.}}<br>
-                        {{end}}
-                    </p>
-
-                    <p><b>Dates:</b><br>
-                        {{range .Dates}}
-                        {{.}}<br>
-                        {{end}}
-                    </p>
+                    </table></p>
 
                     <br>
                     <p><a href="/">Front page</a></p>
