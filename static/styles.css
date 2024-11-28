@@ -24,14 +24,12 @@ p {
     background-color: #c1c1c1;
     padding: 20px;
     overflow-y: auto;
-    /* Allow scrolling inside the sidebar */
 }
 
 .content {
     flex: 1;
     padding: 20px;
     overflow-y: auto;
-    /* Independent scrolling in the main window */
 }
 
 .country-checkboxes {

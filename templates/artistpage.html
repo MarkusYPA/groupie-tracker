@@ -15,6 +15,16 @@
             margin-right: 40px;
         }
 
+        .artist-image {
+            width: 240px;
+            margin-right: 0px;
+        }
+
+        #title {
+            width: 100%;
+            text-align: center;
+        }
+
         .concert-list {
             border-collapse: collapse;
         }
@@ -37,19 +47,20 @@
             <div class="artistbox">
 
                 <div class="collapsible">
-                    <img src="{{.Artist.Image}}" alt="{{.Artist.Name}} Image" class="artist-image"
-                        style="width: 240px;">
-                    <h3 style="font-size: 1.5em;">{{.Artist.Name}}</h3>
+                    <img src="{{.Artist.Image}}" alt="{{.Artist.Name}} Image" class="artist-image">
+                    <div id="title">
+                        <h3 style="font-size: 1.5em;">{{.Artist.Name}}</h3>
+                    </div>                    
                 </div>
 
                 <div class="info-column">
                     <p>Started in {{.Artist.CreDate}}</p><br>
                     <p><b>Members:</b><br></p>
-                        {{range .Artist.Members}}
-                        {{.}}<br>
-                        {{end}}<br>
+                    {{range .Artist.Members}}
+                    {{.}}<br>
+                    {{end}}<br>
                     <p><b>First album release:</b><br></p>
-                        {{.Artist.FAString}}<br><br>
+                    {{.Artist.FAString}}<br><br>
                     <p><b>Concerts:</b>
                     <table class="concert-list">
                         {{range .Gigs}}
@@ -58,7 +69,8 @@
                             <td class="location">{{index . 1}}</td>
                         </tr>
                         {{end}}
-                    </table></p>
+                    </table>
+                    </p>
 
                     <br>
                     <p><a href="/">Front page</a></p>
