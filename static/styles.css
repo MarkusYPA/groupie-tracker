@@ -9,9 +9,11 @@ body {
     padding: 0;
 
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
+    min-height: 100vh; /* Adapt to screen height */
+    padding-bottom: 2rem; /* So the footer doesn't*/
+
 }
 
 h3 {
@@ -31,8 +33,8 @@ p {
 .container {
     display: flex;
     height: 100vh;
+    width: 100%;
     background-color: #e7e7e7;
-    align-content: center;
 }
 
 .sidebar {
@@ -137,4 +139,42 @@ p {
     padding: 25px;
     background-color: rgb(211, 211, 211);
     border-radius: 0px 0px 10px 10px;
+}
+
+footer {
+    justify-content: center;
+    overflow: hidden;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #32323d;
+    max-height: 10rem;
+}
+footer p {
+    font-size: 0.75rem;
+    color: #797979;
+    padding: 6px;
+    text-align: center;
+}
+footer .logo {
+    float: left;
+}
+footer .dark-btn {
+    float: right;
+}
+
+/* Dark Mode */
+.dark-mode, .dark-mode header, .dark-mode .container, .dark-mode footer, .dark-mode .sidebar, .dark-mode .content, .dark-mode .collapsible, .dark-mode .artistbox, .dark-mode .info-column, .dark-mode .artistpage-container {
+    background-color: black;
+    color: white;
+    box-shadow: none;
+
+}
+
+/* Artist Page */
+.artistpage-collapsible {
+    text-align: center;
+}
+.artistpage-info-column {
+    font-family: 'Space Mono', monospace;
 }

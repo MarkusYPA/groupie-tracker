@@ -9,7 +9,7 @@
 </head>
 
 <body>
-
+    
     <div class="container">
 
         <!-- Sidebar with filter selections -->
@@ -144,6 +144,14 @@
         </div>
     </div>
 
+<footer>
+    <p>
+        <a href="#home" class="logo"><img src="/static/guitar.png" width="150" alt="logo"/></a>
+        groupie tracker by [] 2024
+    <button class="dark-btn" onclick="myFunction()">Dark/Light Mode</button>
+    </p>
+</footer>
+
     <script>
         /* Make all checkboxes, number inputs and dropdowns submit the form */
         document.addEventListener("DOMContentLoaded", function () {   // Makes the script run only after html content is loaded
@@ -191,6 +199,13 @@
                 }
             });
         }
+
+        /* Dark Mode */
+        function myFunction() {
+        var element = document.body;
+        element.classList.toggle("dark-mode");
+        }
+
     </script>
 
 </body>
