@@ -1,15 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Silkscreen&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono&display=swap');
+
+
+
 body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: 'Silkscreen', monospace;
     margin: 0;
     padding: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 h3 {
+    font-family: 'Silkscreen', monospace;
     font-size: 1.17em;
+    text-align: center;
     transition: 0.2s ease-out;
+    text-wrap: wrap;
+
 }
 
 p {
+    font-family: 'Space Mono', monospace;
     margin: 0 0 10px 0;
 }
 
@@ -17,10 +32,11 @@ p {
     display: flex;
     height: 100vh;
     background-color: #e7e7e7;
+    align-content: center;
 }
 
 .sidebar {
-    width: 280px;
+    width: 30%;
     background-color: #c1c1c1;
     padding: 20px;
     overflow-y: auto;
@@ -28,11 +44,13 @@ p {
 
 .content {
     flex: 1;
+    width: 70%;
     padding: 20px;
     overflow-y: auto;
 }
 
 .country-checkboxes {
+    font-family: 'Space Mono', monospace;
     display: flex;
     flex-wrap: wrap;
     gap: 3px;
@@ -46,22 +64,36 @@ p {
 
 .artistcolumn {
     display: flex;
-    flex-direction: column;
+    flex-flow: row wrap;
 }
 
 .artistbox {
+    font-family: 'Space Mono', monospace;
+    text-align: center;
+    text-wrap: wrap;
+
     display: flex;
     flex-direction: column;
-    max-width: 45rem;
+    overflow: hidden;
+    max-width: 240px;
+    /* height: auto; */
     margin: 10px 30px;
     border-radius: 10px;
     box-shadow: 6px 8px 10px rgba(104, 104, 104, 0.244);
+    transition: 0.2s ease-out;
+    background-color: #b7b7b7;
+
+    align-self: flex-start; /* Prevent stretching */
+    flex-grow: 0; /* Ensure no extra growth */
 }
 
 .artist-image {
+    display: inline-block;
+    vertical-align: middle;
     /* picture files are 240 by 240 */
-    width: 120px;
-    margin-right: 160px;
+    width: 240px;
+    height: auto;
+    /* margin-right: 160px; */
     transition: 0.2s ease-out;
 }
 
@@ -69,18 +101,20 @@ p {
 
 /* The title row/button of the artis info box */
 .collapsible {
+    font-family: 'Space Mono', monospace;
     cursor: pointer;
-    width: 100%;
-    height: 60px;
+    width: 240px;
+    height: 320px;
     overflow: hidden;
     border: none;
-
+    justify-content: center;
+    
     display: flex;
-    flex-direction: row;
+    flex-flow: column wrap; /* flex-direction: row; */
     align-items: center;
     background-color: rgb(208, 208, 208);
     border-radius: 10px;
-    transition: 0.2s ease-out;
+    /* transition: 0.2s ease-out; */
 }
 
 /* Color when clicked (.active class with JS) and hover */
@@ -91,6 +125,7 @@ p {
 
 /* The Collapsible content, hidden by default */
 .collapse-content {
+    font-family: 'Space Mono', monospace;
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.2s ease-out;

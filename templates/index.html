@@ -116,7 +116,9 @@
                 <div class="artistbox">
                     <div class="collapsible">
                         <img src="{{.Image}}" alt="{{.Name}} Image" class="artist-image">
-                        <h3>{{.Name}}</h3>
+                        <div style="flex-grow: 1; display: flex; align-items: center;">
+                            <h3 style="margin: 0px;">{{.Name}}</h3>
+                        </div>
                     </div>
                     <div class="collapse-content">
                         <div class="info-column">
@@ -127,7 +129,7 @@
                                 {{end}}</p>
                             <p><b>First album release:</b><br>
                                 {{.FAString}}</p>
-                                <!-- <p><b>Concerts:</b><br>
+                            <!-- <p><b>Concerts:</b><br>
                                 {{range .Gigs}}
                                 {{.DateStr}} {{.Locale}}, {{.Country}}<br>
                                 {{end}}</p> -->
@@ -178,18 +180,14 @@
                 var content = this.nextElementSibling;
                 if (content.style.maxHeight) {
                     content.style.maxHeight = null;
-                    this.style.height = "60px";
+                    /* this.style.height = "320px"; */
                     this.style.borderRadius = "10px";
-                    this.children[0].style.width = "120px";
-                    this.children[0].style.marginRight = "160px";
-                    this.children[1].style.fontSize = "1.17em";
+                    this.children[0].style.width = "240px";
                 } else {
                     content.style.maxHeight = content.scrollHeight + "px";
-                    this.style.height = "240px";
+                    /* this.style.height = "320px"; */
                     this.style.borderRadius = "10px 10px 0px 0px";
                     this.children[0].style.width = "240px";
-                    this.children[0].style.marginRight = "40px";
-                    this.children[1].style.fontSize = "1.5em";
                 }
             });
         }
