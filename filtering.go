@@ -5,6 +5,21 @@ import (
 	"strconv"
 )
 
+// Contains user selections
+type filter struct {
+	order     string
+	created   [2]int
+	firstAl   [2]int
+	recPerf   [2]int
+	band      bool
+	solo      bool
+	countries []bool
+}
+
+var (
+	minmaxFirst [6]int
+)
+
 // getMinMax retrieves the minimun and maximum values for three ranges in the filter
 func getMinMax() (int, int, int, int, int, int) {
 	formMin, formMax, fAMin, fAMax, peMin, peMax := 1950, 2024, 1950, 2024, 1950, 2024
@@ -178,29 +193,4 @@ func filterBy(fil filter, arInfos []artistInfo) []artistInfo {
 	}
 	sortArtists(&aisOut, fil.order)
 	return aisOut
-}
-
-// pageDataValues formats the data to be sent to the home template
-func homePageDataValues(f filter, ais []artistInfo) HomePageData {
-
-	cInfos := []countryInfo{}
-	for i, boo := range f.countries {
-		cInfos = append(cInfos, countryInfo{allCountries[i], boo})
-	}
-
-	data := HomePageData{
-		Order:     f.order,
-		BandCheck: f.band,
-		SoloCheck: f.solo,
-		CreMin:    strconv.Itoa(f.created[0]),
-		CreMax:    strconv.Itoa(f.created[1]),
-		FiAlMin:   strconv.Itoa(f.firstAl[0]),
-		FiAlMax:   strconv.Itoa(f.firstAl[1]),
-		PeMin:     strconv.Itoa(f.recPerf[0]),
-		PeMax:     strconv.Itoa(f.recPerf[1]),
-		Countries: cInfos,
-		Artists:   ais,
-		MinMax:    minmaxFirst,
-	}
-	return data
 }

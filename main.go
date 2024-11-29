@@ -6,78 +6,15 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"time"
 )
 
-// URLs from the initial API response
-type APIResponse struct {
-	ArtistsUrl   string `json:"artists"`
-	LocationsUrl string `json:"locations"`
-	DatesUrl     string `json:"dates"`
-	RelationUrl  string `json:"relation"`
-}
-
-// Raw artist data from API
-type artist struct {
-	Id           int      `json:"id"`
-	Image        string   `json:"image"`
-	Name         string   `json:"name"`
-	Members      []string `json:"members"`
-	CreDate      int      `json:"creationDate"`
-	FirstAlbum   string   `json:"firstAlbum"`
-	Locations    string   `json:"locations"`
-	ConcertDates string   `json:"concertDates"`
-	Relations    string   `json:"relations"`
-}
-
-// Raw relation data from API
-type relIndex struct {
-	Index []relations `json:"index"`
-}
-
-// Stores data for relIndex, also straight from API
-type relations struct {
-	Id             int                 `json:"id"`
-	DatesLocations map[string][]string `json:"datesLocations"`
-}
-
-// Parsed dates, formatted dates, and nicely spelled locations and countries
-type dateWithGig struct {
-	Date    time.Time
-	DateStr string
-	Locale  string
-	Country string
-}
-
-// Combination of info from artist and relations with nice dates
-type artistInfo struct {
-	Id         int
-	Name       string
-	Image      string
-	Members    []string
-	CreDate    int
-	FirstAlbum time.Time
-	FAString   string
-	Gigs       []dateWithGig
-}
-
-// Contains user selections
-type filter struct {
-	order     string
-	created   [2]int
-	firstAl   [2]int
-	recPerf   [2]int
-	band      bool
-	solo      bool
-	countries []bool
-}
-
+// Holds the name of a country and if it's been selected
 type countryInfo struct {
 	Name     string
 	Selected bool
 }
 
-// Filter selections and artistInfos for template to display
+// Filter selections and artist informations for home template
 type HomePageData struct {
 	Order     string
 	BandCheck bool
@@ -101,27 +38,45 @@ type ArtisPageData struct {
 
 type ErrorPageData struct {
 	Error    uint
-	Message  string
+	Message1 string
 	Message2 string
 }
 
 var (
-	allCountries  []string
-	apiData       APIResponse
-	artists       []artist
-	relationIndex relIndex
-	artInfos      []artistInfo
-	firstLoad     bool = true
-	flt           filter
-	minmaxFirst   [6]int
-	errorTemplate *template.Template = template.Must(template.ParseFiles("templates/errorpage.html"))
+	firstLoad bool = true
+	flt       filter
 )
+
+// pageDataValues formats the data to be sent to the home template
+func homePageDataValues(f filter, ais []artistInfo) HomePageData {
+
+	cInfos := []countryInfo{}
+	for i, boo := range f.countries {
+		cInfos = append(cInfos, countryInfo{allCountries[i], boo})
+	}
+
+	data := HomePageData{
+		Order:     f.order,
+		BandCheck: f.band,
+		SoloCheck: f.solo,
+		CreMin:    strconv.Itoa(f.created[0]),
+		CreMax:    strconv.Itoa(f.created[1]),
+		FiAlMin:   strconv.Itoa(f.firstAl[0]),
+		FiAlMax:   strconv.Itoa(f.firstAl[1]),
+		PeMin:     strconv.Itoa(f.recPerf[0]),
+		PeMax:     strconv.Itoa(f.recPerf[1]),
+		Countries: cInfos,
+		Artists:   ais,
+		MinMax:    minmaxFirst,
+	}
+	return data
+}
 
 // handler for the homepage
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.URL.Path != "/" {
-		goToErrorPage(http.StatusNotFound, "Not Found", `Page doesn't exist`, w)
+		goToErrorPage(http.StatusNotFound, "Not Found", `Page doesn't exist`, w) // Error 404
 		return
 	}
 
@@ -150,7 +105,7 @@ func artistHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Path[len("/artist/"):]
 	artistID, err := strconv.Atoi(id)
 	if err != nil {
-		goToErrorPage(http.StatusBadRequest, "Bad Request", "Invalid artist ID: "+err.Error(), w)
+		goToErrorPage(http.StatusBadRequest, "Bad Request", "Invalid artist ID: "+err.Error(), w) // Error 400
 		return
 	}
 
@@ -168,7 +123,7 @@ func artistHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if !found1 {
-		goToErrorPage(http.StatusNotFound, "Not Found", "Artist "+id+` doesn't exist`, w)
+		goToErrorPage(http.StatusNotFound, "Not Found", "Artist "+id+` doesn't exist`, w) // Error 404
 		return
 	}
 
@@ -182,18 +137,26 @@ func artistHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if !found2 {
-		goToErrorPage(http.StatusNotFound, "Not Found", "Artist "+id+` doesn't exist`, w)
+		goToErrorPage(http.StatusNotFound, "Not Found", "Artist "+id+` doesn't exist`, w) // Error 404
 		return
 	}
 
 	dataAP.Gigs, err = getGigs(arti)
 	if err != nil {
-		goToErrorPage(http.StatusBadRequest, "Bad Request", "Failed to fetch data from API: "+err.Error(), w)
+		goToErrorPage(http.StatusBadRequest, "Bad Request", "Failed to fetch data from API: "+err.Error(), w) // Error 400
 		return
 	}
 
 	t := template.Must(template.ParseFiles("templates/artistpage.html"))
 	t.Execute(w, dataAP)
+}
+
+// goToErrorPage handles errors by loading an error page to the user
+func goToErrorPage(errorN int, m1 string, m2 string, w http.ResponseWriter) {
+	errorTemplate := template.Must(template.ParseFiles("templates/errorpage.html"))
+	w.WriteHeader(errorN)
+	epd := ErrorPageData{uint(errorN), m1, m2}
+	errorTemplate.Execute(w, epd)
 }
 
 func main() {

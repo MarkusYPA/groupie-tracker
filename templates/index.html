@@ -12,13 +12,12 @@
 
     <div class="container">
 
-        <!-- Sidebar -->
+        <!-- Sidebar with filter selections -->
         <div class="sidebar">
 
             <h1>Filter</h1>
             <form method="POST" action="/">
 
-                <!-- <button type="submit">Apply filter</button><br><br> -->
                 <button type="submit" name="reset" value="rd">Reset to defaults</button><br><br>
 
                 <label for="order">Order by:</label>
@@ -128,7 +127,7 @@
                                 {{end}}</p>
                             <p><b>First album release:</b><br>
                                 {{.FAString}}</p>
-                                <!--<p><b>Concerts:</b><br>
+                                <!-- <p><b>Concerts:</b><br>
                                 {{range .Gigs}}
                                 {{.DateStr}} {{.Locale}}, {{.Country}}<br>
                                 {{end}}</p> -->

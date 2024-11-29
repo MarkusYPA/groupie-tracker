@@ -10,6 +10,78 @@ import (
 	"unicode"
 )
 
+// URLs from the initial API response
+type APIResponse struct {
+	ArtistsUrl   string `json:"artists"`
+	LocationsUrl string `json:"locations"`
+	DatesUrl     string `json:"dates"`
+	RelationUrl  string `json:"relation"`
+}
+
+// Raw artist data from API
+type artist struct {
+	Id           int      `json:"id"`
+	Image        string   `json:"image"`
+	Name         string   `json:"name"`
+	Members      []string `json:"members"`
+	CreDate      int      `json:"creationDate"`
+	FirstAlbum   string   `json:"firstAlbum"`
+	Locations    string   `json:"locations"`
+	ConcertDates string   `json:"concertDates"`
+	Relations    string   `json:"relations"`
+}
+
+// Raw relation data from API
+type relIndex struct {
+	Index []relations `json:"index"`
+}
+
+// Stores data for relIndex, also straight from API
+type relations struct {
+	Id             int                 `json:"id"`
+	DatesLocations map[string][]string `json:"datesLocations"`
+}
+
+// Stores data for locIndex, also straight from API
+type locations struct {
+	Id      int      `json:"id"`
+	Locales []string `json:"locations"`
+}
+
+// Stores data for dtIndex, also straight from API
+type dates struct {
+	Id    int      `json:"id"`
+	Dates []string `json:"dates"`
+}
+
+// Parsed dates, formatted dates, and nicely spelled locations and countries
+type dateWithGig struct {
+	Date    time.Time
+	DateStr string
+	Locale  string
+	Country string
+}
+
+// Combination of info from artist and relations with nice dates
+type artistInfo struct {
+	Id         int
+	Name       string
+	Image      string
+	Members    []string
+	CreDate    int
+	FirstAlbum time.Time
+	FAString   string
+	Gigs       []dateWithGig
+}
+
+var (
+	allCountries  []string
+	apiData       APIResponse
+	artInfos      []artistInfo
+	artists       []artist
+	relationIndex relIndex
+)
+
 func fillAllCountries(ais []artistInfo) {
 	// Place all country names on slice
 	for _, ai := range ais {
@@ -272,13 +344,6 @@ func fetchAPI(body []byte) (APIResponse, error) {
 	var apiData APIResponse
 	err := json.Unmarshal(body, &apiData)
 	return apiData, err
-}
-
-// goToErrorPage handles errors by loading an error page to the user
-func goToErrorPage(errorN int, m1 string, m2 string, w http.ResponseWriter) {
-	w.WriteHeader(errorN)
-	epd := ErrorPageData{uint(errorN), m1, m2}
-	errorTemplate.Execute(w, epd)
 }
 
 // readAPI gets the data from the given API and stores it into some global variables
