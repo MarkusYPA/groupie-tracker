@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    
+
     <div class="container">
 
         <!-- Sidebar with filter selections -->
@@ -144,13 +144,13 @@
         </div>
     </div>
 
-<footer>
-    <p>
-        <a href="#home" class="logo"><img src="/static/guitar.png" width="150" alt="logo"/></a>
-        groupie tracker by [] 2024
-    <button class="dark-btn" onclick="myFunction()">Dark/Light Mode</button>
-    </p>
-</footer>
+    <footer>
+        <p>
+            <a href="#home" class="logo"><img src="/static/guitar.png" width="150" alt="logo" /></a>
+            groupie tracker by [] 2024
+            <button class="dark-btn" onclick="toggleDarkMode()">Dark/Light Mode</button>
+        </p>
+    </footer>
 
     <script>
         /* Make all checkboxes, number inputs and dropdowns submit the form */
@@ -161,6 +161,11 @@
                     this.form.submit();
                 });
             });
+
+            const theme = localStorage.getItem("theme");
+            if (theme === "dark") {
+                document.body.classList.add("dark-mode");
+            }
         });
 
         /* "checkAll" checks all countries  */
@@ -200,10 +205,20 @@
             });
         }
 
-        /* Dark Mode */
+        /* Original Dark Mode function  */
         function myFunction() {
-        var element = document.body;
-        element.classList.toggle("dark-mode");
+            var element = document.body;
+            element.classList.toggle("dark-mode");
+        }
+
+        /* Toggle dark mode and save the preference */
+        function toggleDarkMode() {
+            const body = document.body;
+            body.classList.toggle("dark-mode");
+
+            // Save the current theme in localStorage
+            const currentTheme = body.classList.contains("dark-mode") ? "dark" : "light";
+            localStorage.setItem("theme", currentTheme);
         }
 
     </script>

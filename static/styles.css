@@ -187,6 +187,10 @@ footer .dark-btn {
     box-shadow: none;
 }
 
+.dark-mode .artistbox {
+    box-shadow: 6px 8px 10px rgba(255, 255, 255, 0.05);
+}
+
 .dark-mode header, .dark-mode footer, .dark-mode .artistpage-container {
     background-color: black;
     color: white;
