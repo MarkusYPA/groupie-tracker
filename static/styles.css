@@ -164,11 +164,33 @@ footer .dark-btn {
 }
 
 /* Dark Mode */
-.dark-mode, .dark-mode header, .dark-mode .container, .dark-mode footer, .dark-mode .sidebar, .dark-mode .content, .dark-mode .collapsible, .dark-mode .artistbox, .dark-mode .info-column, .dark-mode .artistpage-container {
+.dark-mode .content {
+    background-color: rgb(60, 60, 60);
+    color: white;
+    box-shadow: none;
+}
+
+.dark-mode .sidebar, .dark-mode .collapsible, .dark-mode .collapse-content, .dark-mode .info-column {
+    background-color: rgb(40, 40, 40);
+    color: white;
+    box-shadow: none;
+}
+
+.dark-mode .active,
+.dark-mode .collapsible:hover {
+    background-color: rgb(20, 20, 20);
+}
+
+.dark-mode, .dark-mode .artistbox {
+    background-color: rgb(20, 20, 20);
+    color: white;
+    box-shadow: none;
+}
+
+.dark-mode header, .dark-mode footer, .dark-mode .artistpage-container {
     background-color: black;
     color: white;
     box-shadow: none;
-
 }
 
 /* Artist Page */
