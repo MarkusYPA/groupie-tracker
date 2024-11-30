@@ -178,3 +178,17 @@ footer .dark-btn {
 .artistpage-info-column {
     font-family: 'Space Mono', monospace;
 }
+
+.artistpage-concert-list {
+    border-collapse: collapse;
+}
+
+.artistpage-concert-list td {
+    padding: 0px;
+}
+
+.artistpage-concert-list td.date {
+    width: 0%;
+    padding-right: 2rem;
+    white-space: nowrap;
+}
