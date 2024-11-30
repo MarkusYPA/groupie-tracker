@@ -228,6 +228,7 @@ func fetchDate(relURL string) (dates, error) {
 	return dat, nil
 }
 
+// getGigs retrieves and parses the dates, locations and countries for an artist's concerts
 func getGigs(artist artist) ([][2]string, error) {
 	gigs := [][2]string{}
 
