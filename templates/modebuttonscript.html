@@ -1,0 +1,20 @@
+{{ define "modebuttonscript" }}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {   // Makes the script run only after html content is loaded
+        const theme = localStorage.getItem("theme");
+        if (theme === "dark") {
+            document.body.classList.add("dark-mode");
+        }
+    });
+
+    /* Toggle dark mode and save the preference */
+    function toggleDarkMode() {
+        const body = document.body;
+        body.classList.toggle("dark-mode");
+
+        // Save the current theme in localStorage
+        const currentTheme = body.classList.contains("dark-mode") ? "dark" : "light";
+        localStorage.setItem("theme", currentTheme);
+    }
+</script>
+{{end}}

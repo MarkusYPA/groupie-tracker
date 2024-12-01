@@ -1,7 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Silkscreen&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Space+Mono&display=swap');
 
+/* Pseudo-class for color variables */
+:root {
+    /* light mode */
+    --light1: rgb(230, 230, 230);
+    --light2: rgb(200, 200, 200);
+    --light3: rgb(165, 165, 165);
+    --light4: rgb(50, 50, 50);
+    --light-shadow: rgba(104, 104, 104, 0.244);
 
+    /* dark mode */
+    --dark1: rgb(60, 60, 60);
+    --dark2: rgb(40, 40, 40);
+    --dark3: rgb(20, 20, 20);
+    --dark4: black;
+    --dark-shadow: rgba(255, 255, 255, 0.05);
+    --dark-text: white;
+
+    --neutral-text: rgb(120, 120, 120);
+}
 
 body {
     font-family: 'Silkscreen', monospace;
@@ -11,8 +29,10 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    min-height: 100vh; /* Adapt to screen height */
-    padding-bottom: 2rem; /* So the footer doesn't*/
+    min-height: 100vh;
+    /* Adapt to screen height */
+    padding-bottom: 2rem;
+    /* So the footer doesn't*/
 
 }
 
@@ -34,12 +54,12 @@ p {
     display: flex;
     height: 100vh;
     width: 100%;
-    background-color: #e7e7e7;
+    background-color: var(--light1);
 }
 
 .sidebar {
     width: 30%;
-    background-color: #c1c1c1;
+    background-color: var(--light2);
     padding: 20px;
     overflow-y: auto;
 }
@@ -81,12 +101,14 @@ p {
     /* height: auto; */
     margin: 10px 30px;
     border-radius: 10px;
-    box-shadow: 6px 8px 10px rgba(104, 104, 104, 0.244);
+    box-shadow: 6px 8px 10px var(--light-shadow);
     transition: 0.2s ease-out;
-    background-color: #b7b7b7;
+    background-color: var(--light3);
 
-    align-self: flex-start; /* Prevent stretching */
-    flex-grow: 0; /* Ensure no extra growth */
+    align-self: flex-start;
+    /* Prevent stretching */
+    flex-grow: 0;
+    /* Ensure no extra growth */
 }
 
 .artist-image {
@@ -95,7 +117,6 @@ p {
     /* picture files are 240 by 240 */
     width: 240px;
     height: auto;
-    /* margin-right: 160px; */
     transition: 0.2s ease-out;
 }
 
@@ -110,11 +131,12 @@ p {
     overflow: hidden;
     border: none;
     justify-content: center;
-    
+
     display: flex;
-    flex-flow: column wrap; /* flex-direction: row; */
+    flex-flow: column wrap;
+    /* flex-direction: row; */
     align-items: center;
-    background-color: rgb(208, 208, 208);
+    background-color: var(--light2);
     border-radius: 10px;
     /* transition: 0.2s ease-out; */
 }
@@ -122,7 +144,7 @@ p {
 /* Color when clicked (.active class with JS) and hover */
 .active,
 .collapsible:hover {
-    background-color: #b7b7b7;
+    background-color: var(--light3);
 }
 
 /* The Collapsible content, hidden by default */
@@ -137,7 +159,7 @@ p {
     display: flex;
     flex-direction: column;
     padding: 25px;
-    background-color: rgb(211, 211, 211);
+    background-color: var(--light2);
     border-radius: 0px 0px 10px 10px;
 }
 
@@ -147,62 +169,94 @@ footer {
     position: fixed;
     bottom: 0;
     width: 100%;
-    background-color: #32323d;
+    background-color: var(--light4);
     max-height: 10rem;
 }
+
 footer p {
     font-size: 0.75rem;
-    color: #797979;
+    color: var(--neutral-text);
     padding: 6px;
     text-align: center;
 }
+
 footer .logo {
     float: left;
 }
+
 footer .dark-btn {
     float: right;
 }
 
 /* Dark Mode */
-.dark-mode .content {
-    background-color: rgb(60, 60, 60);
-    color: white;
-    box-shadow: none;
+.dark-mode,
+.dark-mode .content,
+.dark-mode .artistpage-container {
+    background-color: var(--dark1);
+    color: var(--dark-text);
 }
 
-.dark-mode .sidebar, .dark-mode .collapsible, .dark-mode .collapse-content, .dark-mode .info-column {
-    background-color: rgb(40, 40, 40);
-    color: white;
-    box-shadow: none;
+.dark-mode .sidebar,
+.dark-mode .collapsible,
+.dark-mode .collapse-content,
+.dark-mode .info-column,
+.dark-mode .artistpage-info-column {
+    background-color: var(--dark2);
+    color: var(--dark-text);
 }
 
 .dark-mode .active,
 .dark-mode .collapsible:hover {
-    background-color: rgb(20, 20, 20);
+    background-color: var(--dark3);
 }
 
-.dark-mode, .dark-mode .artistbox {
-    background-color: rgb(20, 20, 20);
-    color: white;
-    box-shadow: none;
+.dark-mode .artistbox,
+.dark-mode .artistpage-content {
+    background-color: var(--dark3);
+    color: var(--dark-text);
 }
 
-.dark-mode .artistbox {
-    box-shadow: 6px 8px 10px rgba(255, 255, 255, 0.05);
+.dark-mode .artistbox
+.dark-mode .artistpage-container {
+    box-shadow: 6px 8px 10px var(--dark-shadow);
 }
 
-.dark-mode header, .dark-mode footer, .dark-mode .artistpage-container {
-    background-color: black;
-    color: white;
-    box-shadow: none;
+.dark-mode header,
+.dark-mode footer {
+    background-color: var(--dark4);
+    color: var(--dark-text);
 }
 
 /* Artist Page */
+.artistpage-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    justify-content: center;
+    box-shadow: 6px 8px 10px var(--light-shadow); /* I can't get a box shadow to show up */
+    background-color: var(--light1);
+}
+
+.artistpage-content {
+    height:fit-content;
+    border-radius: 10px;
+    margin: 2rem;
+    background-color: var(--light3);
+}
+
+.artistpage-artistbox {
+}
+
 .artistpage-collapsible {
     text-align: center;
+    padding-top: 1.5rem;
 }
+
 .artistpage-info-column {
     font-family: 'Space Mono', monospace;
+    border-radius: 0px 0px 10px 10px;
+    padding: 1.5rem;
+    background-color: var(--light2);
 }
 
 .artistpage-concert-list {

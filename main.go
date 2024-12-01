@@ -96,7 +96,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 	toDisplay := filterBy(flt, artInfos)
 	data := homePageDataValues(flt, toDisplay)
-	t := template.Must(template.ParseFiles("templates/index.html"))
+	t := template.Must(template.ParseFiles("templates/index.html", "templates/modebuttonscript.html", "templates/footer.html"))
 	t.Execute(w, data)
 }
 
@@ -147,13 +147,13 @@ func artistHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	t := template.Must(template.ParseFiles("templates/artistpage.html"))
+	t := template.Must(template.ParseFiles("templates/artistpage.html", "templates/modebuttonscript.html", "templates/footer.html"))
 	t.Execute(w, dataAP)
 }
 
 // goToErrorPage handles errors by loading an error page to the user
 func goToErrorPage(errorN int, m1 string, m2 string, w http.ResponseWriter) {
-	errorTemplate := template.Must(template.ParseFiles("templates/errorpage.html"))
+	errorTemplate := template.Must(template.ParseFiles("templates/errorpage.html", "templates/modebuttonscript.html", "templates/footer.html"))
 	w.WriteHeader(errorN)
 	epd := ErrorPageData{uint(errorN), m1, m2}
 	errorTemplate.Execute(w, epd)
