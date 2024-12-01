@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 // Holds the name of a country and if it's been selected
@@ -75,7 +76,7 @@ func homePageDataValues(f filter, ais []artistInfo) HomePageData {
 // handler for the homepage
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 
-	if r.URL.Path != "/" {
+	if r.URL.Path != "/" && r.URL.Path != "/groupie-tracker"{
 		goToErrorPage(http.StatusNotFound, "Not Found", `Page doesn't exist`, w) // Error 404
 		return
 	}
@@ -102,7 +103,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 // artistHandler serves a site for a specific artist
 func artistHandler(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Path[len("/artist/"):]
+	id := r.URL.String()[strings.LastIndex(r.URL.String(), "=")+1:]
 	artistID, err := strconv.Atoi(id)
 	if err != nil {
 		goToErrorPage(http.StatusBadRequest, "Bad Request", "Invalid artist ID: "+err.Error(), w) // Error 400
@@ -160,12 +161,12 @@ func goToErrorPage(errorN int, m1 string, m2 string, w http.ResponseWriter) {
 }
 
 func main() {
-	fileServer := http.FileServer(http.Dir("./static"))
+	http.Handle("/static/", http.FileServer(http.Dir(".")))
 
-	http.Handle("/static/styles.css", http.StripPrefix("/static/", fileServer))
-	http.Handle("/static/sad.jpg", http.StripPrefix("/static/", fileServer))
+	//http.Handle("/static/styles.css", http.StripPrefix("/static/", fileServer))
+	//http.Handle("/static/sad.jpg", http.StripPrefix("/static/", fileServer))
 	http.HandleFunc("/", homeHandler)
-	http.HandleFunc("/artist/", artistHandler)
+	http.HandleFunc("/groupie-tracker/artist/", artistHandler)
 
 	fmt.Println("Server is running on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))

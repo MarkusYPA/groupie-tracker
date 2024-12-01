@@ -50,6 +50,93 @@ p {
     margin: 0 0 10px 0;
 }
 
+/*this for the responsive side bar */
+
+/* Responsive Sidebar */
+#menu-toggle {
+    display: none;
+}
+
+.menu-icon {
+    display: none;
+    cursor: pointer;
+    font-size: 24px;
+}
+
+#mobile-nav-list {
+    display: none;
+    list-style-type: none;
+    padding: 0;
+}
+
+#menu-toggle:checked + .menu-icon + #mobile-nav-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    position: absolute;
+    top: 60px; /* Adjust based on your header height */
+    right: 0;
+    padding: 20px;
+    width: 100%;
+    z-index: 10;
+}
+
+#mobile-nav-list a {
+    text-decoration: none;
+    padding: 10px 0;
+}
+
+/* Desktop Navigation */
+#header-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px 20px;
+    width: 100%;
+}
+
+#desktop-nav {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+#desktop-nav-list {
+    display: flex;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+#desktop-nav-list li {
+    margin-left: 20px;
+}
+
+#desktop-nav-list a {
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .menu-icon {
+        display: block;
+    }
+
+    #desktop-nav {
+        display: none;
+    }
+}
+
+@media (min-width: 769px) {
+    #mobile-nav {
+        display: none;
+    }
+}
+
+/*this for the responsive side bar */
+
 .container {
     display: flex;
     height: 100vh;
@@ -186,6 +273,8 @@ footer .logo {
 
 footer .dark-btn {
     float: right;
+    background-color: var(--light3);
+    color: white;
 }
 
 /* Dark Mode */
@@ -225,6 +314,11 @@ footer .dark-btn {
 .dark-mode footer {
     background-color: var(--dark4);
     color: var(--dark-text);
+}
+.dark-mode footer .dark-btn{
+    background-color: var(--light1);
+    color: var(--light4);
+    
 }
 
 /* Artist Page */
@@ -272,3 +366,6 @@ footer .dark-btn {
     padding-right: 2rem;
     white-space: nowrap;
 }
+
+/*this for the responsive side bar */
+
