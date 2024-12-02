@@ -1,25 +1,23 @@
     // Makes the script run only after html content is loaded
-    document.addEventListener("DOMContentLoaded", function () {  
+    document.addEventListener("DOMContentLoaded", function () {
         const theme = localStorage.getItem("theme");
-        const button = document.getElementById('buttonText');
+        const icon = document.getElementById('themeIcon');
         if (theme === "dark") {
             document.body.classList.add("dark-mode");
-            button.textContent = 'Light mode';
+            icon.textContent = 'light_mode';
         } else {
-            button.textContent = 'Dark mode';
+            icon.textContent = 'dark_mode';
         }
     });
-
-    /* Toggle dark mode and save the preference */
+    
     function toggleDarkMode() {
         const body = document.body;
-        const button = document.getElementById('buttonText');
+        const icon = document.getElementById('themeIcon');
         body.classList.toggle("dark-mode");
-
-        // Save the current theme in localStorage
+    
         const currentTheme = body.classList.contains("dark-mode") ? "dark" : "light";
         localStorage.setItem("theme", currentTheme);
-        button.textContent = currentTheme === "dark" ? "Light mode" : "Dark mode";
+        icon.textContent = currentTheme === "dark" ? "light_mode" : "dark_mode";
     }
 
     /* Make all checkboxes, number inputs and dropdowns submit the form */
