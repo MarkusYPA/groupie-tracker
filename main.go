@@ -9,6 +9,8 @@ import (
 	"strings"
 )
 
+
+
 // Holds the name of a country and if it's been selected
 type countryInfo struct {
 	Name     string
@@ -48,6 +50,9 @@ var (
 	flt       filter
 )
 
+var tmpl = template.Must(template.ParseGlob("templates/*.html"))
+
+
 // pageDataValues formats the data to be sent to the home template
 func homePageDataValues(f filter, ais []artistInfo) HomePageData {
 
@@ -73,6 +78,7 @@ func homePageDataValues(f filter, ais []artistInfo) HomePageData {
 	return data
 }
 
+
 // handler for the homepage
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 
@@ -97,8 +103,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 	toDisplay := filterBy(flt, artInfos)
 	data := homePageDataValues(flt, toDisplay)
-	t := template.Must(template.ParseFiles("templates/index.html", "templates/modebuttonscript.html", "templates/footer.html"))
-	t.Execute(w, data)
+	tmpl.ExecuteTemplate(w, "index.html",data)
 }
 
 // artistHandler serves a site for a specific artist
@@ -148,24 +153,20 @@ func artistHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	t := template.Must(template.ParseFiles("templates/artistpage.html", "templates/modebuttonscript.html", "templates/footer.html"))
-	t.Execute(w, dataAP)
+	tmpl.ExecuteTemplate(w, "artistpage.html",dataAP)
 }
 
 // goToErrorPage handles errors by loading an error page to the user
 func goToErrorPage(errorN int, m1 string, m2 string, w http.ResponseWriter) {
-	errorTemplate := template.Must(template.ParseFiles("templates/errorpage.html", "templates/modebuttonscript.html", "templates/footer.html"))
 	w.WriteHeader(errorN)
 	epd := ErrorPageData{uint(errorN), m1, m2}
 	fmt.Printf("%d %s, %s\n", errorN, m1, m2)
-	errorTemplate.Execute(w, epd)
+	tmpl.ExecuteTemplate(w, "errorpage.html",epd)
 }
 
 func main() {
 	http.Handle("/static/", http.FileServer(http.Dir(".")))
 
-	//http.Handle("/static/styles.css", http.StripPrefix("/static/", fileServer))
-	//http.Handle("/static/sad.jpg", http.StripPrefix("/static/", fileServer))
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/groupie-tracker/artist/", artistHandler)
 

@@ -5,17 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
     <title>Restricted</title>
-    <link rel="stylesheet" href="/assets/style.css">
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <div class="top-bar">
-        <a href="/groupie-tracker" class="nav-link">Home</a>
-        <a href="/about" class="nav-link">About</a>
+    <header>
+        <div id="header-container">
+            <nav id="desktop-nav">
+                <ul id="desktop-nav-list">
+                    <li><a href="#home" class="logo"><img src="https://i.imgur.com/g5VIjwc.png" height="50" alt="logo" /></a></li>
+                    <li><a href="/groupie-tracker">Home</a></li>
+                    <li><a href="/groupie-tracker/about">About</a></li>
+                </ul>
+            </nav>
+            <nav id="mobile-nav">
+                <input type="checkbox" id="menu-toggle">
+                <label for="menu-toggle" class="menu-icon">&#9776;</label>
+                <ul id="mobile-nav-list">
+                    <li><a href="/groupie-tracker">Home</a></li>
+                    <li><a href="/groupie-tracker/about">About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <div class="content">
+            <div class="artistbox">
+                <img src="/static/sad.jpg" alt="Error image" class="artist-image" style="width: 240px;">
+
+                <div class="info-column">
+                    <p><b>YOU ARE NOT ALLOWED HERE</b></p>
+                    <p><a href="/">Front page</a></p>
+
+                </div>
+
+            </div>
+        </div>
     </div>
-    <div class="error-container">
-        <h1>YOU ARE NOT ALLOWED IN HERE</h1>
-        <p><a href="/groupie-tracker">Go back to the homepage</a></p>
-    </div>
-    {{ template "footer" . }}
+    <footer>
+        <p>groupie tracker by [] 2024</p>
+        <button id="buttonText" class="dark-btn" onclick="toggleDarkMode()">
+            <span class="material-symbols-outlined" id="themeIcon">dark_mode</span>
+        </button>
+    </footer>
+    <script src="/static/ui-functions.js"></script>
 </body>
 </html>
