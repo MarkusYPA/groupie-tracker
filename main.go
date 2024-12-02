@@ -76,7 +76,7 @@ func homePageDataValues(f filter, ais []artistInfo) HomePageData {
 // handler for the homepage
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 
-	if r.URL.Path != "/" && r.URL.Path != "/groupie-tracker"{
+	if r.URL.Path != "/" && r.URL.Path != "/groupie-tracker" {
 		goToErrorPage(http.StatusNotFound, "Not Found", `Page doesn't exist`, w) // Error 404
 		return
 	}
@@ -157,6 +157,7 @@ func goToErrorPage(errorN int, m1 string, m2 string, w http.ResponseWriter) {
 	errorTemplate := template.Must(template.ParseFiles("templates/errorpage.html", "templates/modebuttonscript.html", "templates/footer.html"))
 	w.WriteHeader(errorN)
 	epd := ErrorPageData{uint(errorN), m1, m2}
+	fmt.Printf("%d %s, %s\n", errorN, m1, m2)
 	errorTemplate.Execute(w, epd)
 }
 
