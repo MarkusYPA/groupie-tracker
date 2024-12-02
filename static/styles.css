@@ -285,7 +285,7 @@ footer p {
     flex-grow: 1;
 }
 
-/* Dark/Light Mode Icon Button */
+/* Dark/Light Mode and Back to Top Icon Button */
 footer .dark-btn, .back-to-top {
     background: none;
     border: none;
