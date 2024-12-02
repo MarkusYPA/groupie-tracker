@@ -286,15 +286,16 @@ footer p {
 }
 
 /* Dark/Light Mode Icon Button */
-footer .dark-btn {
+footer .dark-btn, .back-to-top {
     background: none;
     border: none;
     outline: none;
     cursor: pointer;
     padding: 0;
     margin: 1rem;
+    display: block;
 }
-footer .dark-btn .material-symbols-outlined {
+footer .dark-btn .material-symbols-outlined, .back-to-top .material-symbols-outlined {
     font-variation-settings:
         'FILL' 0,
         'wght' 800,
@@ -304,7 +305,7 @@ footer .dark-btn .material-symbols-outlined {
     vertical-align: middle;
     color: var(--light-text);
 }
-.dark-mode footer .dark-btn .material-symbols-outlined {
+.dark-mode footer .dark-btn .material-symbols-outlined, .dark-mode footer .back-to-top .material-symbols-outlined {
     color: var(--dark-text);
 }
 

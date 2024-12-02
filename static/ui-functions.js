@@ -66,3 +66,11 @@
             }
         });
     }
+
+// Scroll to the top of the page when the button is clicked
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
