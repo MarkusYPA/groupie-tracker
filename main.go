@@ -9,8 +9,6 @@ import (
 	"strings"
 )
 
-
-
 // Holds the name of a country and if it's been selected
 type countryInfo struct {
 	Name     string
@@ -52,7 +50,6 @@ var (
 
 var tmpl = template.Must(template.ParseGlob("templates/*.html"))
 
-
 // pageDataValues formats the data to be sent to the home template
 func homePageDataValues(f filter, ais []artistInfo) HomePageData {
 
@@ -78,11 +75,10 @@ func homePageDataValues(f filter, ais []artistInfo) HomePageData {
 	return data
 }
 
-
 // handler for the homepage
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 
-	if r.URL.Path != "/" && r.URL.Path != "/groupie-tracker" {
+	if r.URL.Path != "/" && r.URL.Path != "/groupie-tracker" && r.URL.Path != "/groupie-tracker/about" {
 		goToErrorPage(http.StatusNotFound, "Not Found", `Page doesn't exist`, w) // Error 404
 		return
 	}
@@ -102,8 +98,14 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	toDisplay := filterBy(flt, artInfos)
+	
 	data := homePageDataValues(flt, toDisplay)
-	tmpl.ExecuteTemplate(w, "index.html",data)
+	if r.URL.Path == "/groupie-tracker/about" {
+		tmpl.ExecuteTemplate(w, "about.html", nil)
+	} else {
+		tmpl.ExecuteTemplate(w, "index.html", data)
+	}
+
 }
 
 // artistHandler serves a site for a specific artist
@@ -153,7 +155,7 @@ func artistHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl.ExecuteTemplate(w, "artistpage.html",dataAP)
+	tmpl.ExecuteTemplate(w, "artistpage.html", dataAP)
 }
 
 // goToErrorPage handles errors by loading an error page to the user
@@ -161,7 +163,7 @@ func goToErrorPage(errorN int, m1 string, m2 string, w http.ResponseWriter) {
 	w.WriteHeader(errorN)
 	epd := ErrorPageData{uint(errorN), m1, m2}
 	fmt.Printf("%d %s, %s\n", errorN, m1, m2)
-	tmpl.ExecuteTemplate(w, "errorpage.html",epd)
+	tmpl.ExecuteTemplate(w, "errorpage.html", epd)
 }
 
 func main() {
@@ -169,6 +171,7 @@ func main() {
 
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/groupie-tracker/artist/", artistHandler)
+	http.HandleFunc("/groupie-tracker/about", homeHandler)
 
 	fmt.Println("Server is running on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
