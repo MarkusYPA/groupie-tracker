@@ -6,42 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Artist.Name}}</title>
     <link rel="stylesheet" href="/static/styles.css">
-    <!--     <style>
-        .collapsible {
-            background-color: #b7b7b7;
-            border-radius: 10px 10px 0px 0px;
-            cursor: auto;
-            height: 240px;
-            margin-right: 40px;
-        }
-
-        .artist-image {
-            width: 240px;
-            margin-right: 0px;
-        }
-
-        #title {
-            width: 100%;
-            text-align: center;
-        }
-
-        .concert-list {
-            border-collapse: collapse;
-        }
-
-        .concert-list td {
-            padding: 0px;
-        }
-
-        .concert-list td.date {
-            width: 0%;
-            padding-right: 2rem;
-            white-space: nowrap;
-        }
-    </style> -->
 </head>
 
 <body>
+    {{ template "header" . }}
+
     <div class="artistpage-container">
         <div class="artistpage-content">
             <div class="artistpage-artistbox">
@@ -81,7 +50,6 @@
     </div>
 
     {{ template "footer" . }}
-    {{ template "modebuttonscript" . }}
 
     <script src="/static/ui-functions.js"></script>
 

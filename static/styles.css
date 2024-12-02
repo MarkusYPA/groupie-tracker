@@ -223,6 +223,10 @@ header {
     transition: 0.2s ease-out;
 }
 
+.artistbox :hover{
+    transform: scale(0.9);
+}
+
 /* JS collapse from w3schools https://www.w3schools.com/howto/howto_js_collapsible.asp */
 
 /* The title row/button of the artist info box */
