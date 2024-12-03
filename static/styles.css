@@ -110,6 +110,7 @@ header {
     width: 100%;
     background-color: var(--light3);
     max-height: 10rem;
+    z-index: 1000;
 }
 
 #header-container {
@@ -226,6 +227,7 @@ header {
     align-self: flex-start;
     /* Prevent stretching */
     flex-grow: 0;
+    z-index: 1;
     /* Ensure no extra growth */
 }
 
@@ -264,7 +266,8 @@ header {
 .active,
 .collapsible:hover {
     background-color: var(--light3);
-    transform: scale(1.05);
+    transform: scale(1.06);
+    z-index: 2;
 }
 
 /* Artist Info collapsible content, hidden by default */
@@ -293,6 +296,7 @@ footer {
     width: 100%;
     background-color: var(--light3);
     max-height: 10rem;
+    z-index: 1000;
 }
 
 footer p {
