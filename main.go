@@ -80,6 +80,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.URL.Path != "/" && r.URL.Path != "/groupie-tracker" && r.URL.Path != "/groupie-tracker/about" {
 		goToErrorPage(http.StatusNotFound, "Not Found", `Page doesn't exist`, w) // Error 404
+		fmt.Println("Bad url path:", r.URL.Path)
 		return
 	}
 
@@ -172,8 +173,9 @@ func main() {
 	fileServer := http.FileServer(http.Dir("."))
 	http.Handle("/static/styles.css", fileServer)
 	http.Handle("/static/sad.jpg", fileServer)
-	//http.Handle("/static/guitar.png", fileServer)
+	http.Handle("/static/guitarbrown.png", fileServer)
 	http.Handle("/static/ui-functions.js", fileServer)
+	http.Handle("/favicon.ico", fileServer)
 
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/groupie-tracker/artist/", artistHandler)

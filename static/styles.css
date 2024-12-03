@@ -2,8 +2,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Mono&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
 
-/* Pseudo-class for color variables */
+/* Pseudo-class for variables */
 :root {
+
     /* light mode */
     --light1: rgb(230, 230, 230);
     --light2: rgb(200, 200, 200);
@@ -19,6 +20,7 @@
     --dark-shadow: rgba(255, 255, 255, 0.05);
     --dark-text: white;
 
+    /* used during both */
     --neutral-text: rgb(120, 120, 120);
 }
 
@@ -38,9 +40,15 @@ body {
 
 }
 
+h1 {
+    font-family: 'Silkscreen', monospace;
+    font-size: clamp(20.2px, 3.37vw + 10.11px, 32px);
+}
+
 h3 {
     font-family: 'Silkscreen', monospace;
-    font-size: 1.17em;
+    /* font-size: 1.17em; */ 
+    font-size: clamp(12px, 2vw + 6px, 19px);  /* font sizes change at 300-650 px view width */ 
     text-align: center;
     transition: 0.2s ease-out;
     text-wrap: wrap;
@@ -62,7 +70,8 @@ p {
 .menu-icon {
     display: none;
     cursor: pointer;
-    font-size: 24px;
+    /* font-size: 24px; */
+    font-size: clamp(15.2px, 2.54vw + 7.58px, 24px);
 }
 
 #mobile-nav-list {
@@ -71,12 +80,13 @@ p {
     padding: 0;
 }
 
-#menu-toggle:checked + .menu-icon + #mobile-nav-list {
+#menu-toggle:checked+.menu-icon+#mobile-nav-list {
     display: flex;
     flex-direction: column;
     align-items: center;
     position: absolute;
-    top: 60px; /* Adjust based on your header height */
+    top: 60px;
+    /* Adjust based on your header height */
     right: 0;
     padding: 20px;
     width: 100%;
@@ -118,7 +128,8 @@ header {
 
 #desktop-nav-list {
     display: flex;
-    align-items: center; /* Center align items vertically */
+    align-items: center;
+    /* Center align items vertically */
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -165,6 +176,8 @@ header {
     background-color: var(--light2);
     padding: 2rem;
     overflow-y: auto;
+
+    font-size: clamp(10.1px, 1.68vw + 5.05px, 16px);
 }
 
 .content {
@@ -172,6 +185,8 @@ header {
     width: 70%;
     padding: 2rem 2rem 4rem 2rem;
     overflow-y: auto;
+
+    font-size: clamp(10.1px, 1.68vw + 5.05px, 16px);
 }
 
 .country-checkboxes {
@@ -281,14 +296,17 @@ footer {
 }
 
 footer p {
-    font-size: 0.75rem;
+    /* font-size: 0.75rem; */
+    font-size: clamp(7.6px, 1.26vw + 3.79px, 12px);
+    
     color: var(--neutral-text);
     text-align: center;
     flex-grow: 1;
 }
 
 /* Dark/Light Mode and Back to Top Icon Button */
-footer .dark-btn, .back-to-top {
+footer .dark-btn,
+.back-to-top {
     background: none;
     border: none;
     outline: none;
@@ -297,17 +315,22 @@ footer .dark-btn, .back-to-top {
     margin: 1rem;
     display: block;
 }
-footer .dark-btn .material-symbols-outlined, .back-to-top .material-symbols-outlined {
+
+footer .dark-btn .material-symbols-outlined,
+.back-to-top .material-symbols-outlined {
     font-variation-settings:
         'FILL' 0,
         'wght' 800,
         'GRAD' 0,
         'opsz' 48;
-    font-size: 2rem;
+    /* font-size: 2rem; */
+    font-size: clamp(20.2px, 3.37vw + 10.11px, 32px);
     vertical-align: middle;
     color: var(--light-text);
 }
-.dark-mode footer .dark-btn .material-symbols-outlined, .dark-mode footer .back-to-top .material-symbols-outlined {
+
+.dark-mode footer .dark-btn .material-symbols-outlined,
+.dark-mode footer .back-to-top .material-symbols-outlined {
     color: var(--dark-text);
 }
 
@@ -349,6 +372,7 @@ footer .dark-btn .material-symbols-outlined, .back-to-top .material-symbols-outl
     background-color: var(--dark3);
     color: var(--dark-text);
 }
+
 /* .dark-mode footer .dark-btn{
     background-color: var(--light2);
     color: var(--light4);
@@ -360,20 +384,19 @@ footer .dark-btn .material-symbols-outlined, .back-to-top .material-symbols-outl
     display: flex;
     min-height: 100vh;
     width: 100%;
-    justify-content: center;    
+    justify-content: center;
     background-color: var(--light1);
 }
 
 .artistpage-content {
-    height:fit-content;
+    height: fit-content;
     border-radius: 10px;
     margin: 4rem 0rem 4rem 0rem;
     box-shadow: 6px 8px 10px var(--light-shadow);
     background-color: var(--light3);
 }
 
-.artistpage-artistbox {
-}
+.artistpage-artistbox {}
 
 .artistpage-collapsible {
     text-align: center;
@@ -385,6 +408,8 @@ footer .dark-btn .material-symbols-outlined, .back-to-top .material-symbols-outl
     border-radius: 0px 0px 10px 10px;
     padding: 1.5rem;
     background-color: var(--light2);
+
+    font-size: clamp(10.1px, 1.68vw + 5.05px, 16px);
 }
 
 .artistpage-concert-list {
@@ -405,5 +430,6 @@ footer .dark-btn .material-symbols-outlined, .back-to-top .material-symbols-outl
 
 /* Hyperlinks */
 .dark-mode a {
-  color: #04ff00; /* Default color */
+    color: #04ff00;
+    /* Default color */
 }
