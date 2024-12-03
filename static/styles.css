@@ -338,7 +338,7 @@ footer .dark-btn .material-symbols-outlined, .back-to-top .material-symbols-outl
 }
 
 .dark-mode .artistbox,
-.dark-mode .artistpage-container {
+.dark-mode .artistpage-content {
     box-shadow: 6px 8px 10px var(--dark-shadow);
 }
 
@@ -358,15 +358,15 @@ footer .dark-btn .material-symbols-outlined, .back-to-top .material-symbols-outl
     display: flex;
     min-height: 100vh;
     width: 100%;
-    justify-content: center;
-    box-shadow: 6px 8px 10px var(--light-shadow); /* I can't get a box shadow to show up */
+    justify-content: center;    
     background-color: var(--light1);
 }
 
 .artistpage-content {
     height:fit-content;
     border-radius: 10px;
-    margin: 4rem;
+    margin: 4rem 0rem 4rem 0rem;
+    box-shadow: 6px 8px 10px var(--light-shadow);
     background-color: var(--light3);
 }
 
