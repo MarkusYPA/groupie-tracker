@@ -95,6 +95,7 @@ header {
     align-items: center;
     padding: 10px 20px;
     width: 100%;
+    font-size: clamp(10.1px, 1.68vw + 5.05px, 16px);
 }
 
 #desktop-nav {
@@ -163,6 +164,18 @@ header {
     display: flex;
     align-items: center;
     min-width: 180px;
+}
+
+select {
+    font-size: clamp(10.1px, 1.68vw + 5.05px, 16px);
+}
+
+input[type="number"] {
+    font-size: clamp(10.1px, 1.68vw + 5.05px, 16px);
+}
+
+button {
+    font-size: clamp(10.1px, 1.68vw + 5.05px, 16px);
 }
 
 .artistcolumn {
