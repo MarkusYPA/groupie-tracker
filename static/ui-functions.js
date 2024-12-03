@@ -55,14 +55,12 @@
             var content = this.nextElementSibling;
             if (content.style.maxHeight) {
                 content.style.maxHeight = null;
-                /* this.style.height = "320px"; */
                 this.style.borderRadius = "10px";
-                this.children[0].style.width = "240px";
+                //this.children[0].style.width = "240px";
             } else {
                 content.style.maxHeight = content.scrollHeight + "px";
-                /* this.style.height = "320px"; */
                 this.style.borderRadius = "10px 10px 0px 0px";
-                this.children[0].style.width = "240px";
+                //this.children[0].style.width = "240px";
             }
         });
     }
