@@ -174,6 +174,7 @@ func main() {
 	http.Handle("/static/styles.css", fileServer)
 	http.Handle("/static/sad.jpg", fileServer)
 	http.Handle("/static/guitarbrown.png", fileServer)
+	http.Handle("/static/home-functions.js", fileServer)
 	http.Handle("/static/ui-functions.js", fileServer)
 	http.Handle("/favicon.ico", fileServer)
 
