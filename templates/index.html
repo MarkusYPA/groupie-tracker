@@ -11,7 +11,7 @@
 <body>
 
     {{ template "header" . }}
-    
+
 
     <div class="container">
 
@@ -21,23 +21,23 @@
             <h1>Filter</h1>
             <form method="POST" action="/">
 
-                <button type="submit" name="reset" value="rd">Reset to defaults</button><br><br>
+                <button type="submit" name="reset" value="rd">Reset to Defaults</button><br><br>
 
-                <label for="order">Order by:</label>
+                <label for="order">Sort:</label>
                 <select name="order" id="order">
                     <option value="namedown" {{if eq .Order "namedown" }}selected{{end}}>Name A-Z</option>
+                    <option value="nameup" {{if eq .Order "nameup" }}selected{{end}}>Name Z-A</option>
                     <option value="fodown" {{if eq .Order "fodown" }}selected{{end}}>Started, old-new</option>
+                    <option value="foup" {{if eq .Order "foup" }}selected{{end}}>Started, new-old</option>
                     <option value="fadown" {{if eq .Order "fadown" }}selected{{end}}>First album, old-new</option>
+                    <option value="faup" {{if eq .Order "faup" }}selected{{end}}>First album, new-old</option>
                     <option value="perdown" {{if eq .Order "perdown" }}selected{{end}}>Latest show, old-new
                     </option>
-                    <option value="nameup" {{if eq .Order "nameup" }}selected{{end}}>Name Z-A</option>
-                    <option value="foup" {{if eq .Order "foup" }}selected{{end}}>Started, new-old</option>
-                    <option value="faup" {{if eq .Order "faup" }}selected{{end}}>First album, new-old</option>
                     <option value="perup" {{if eq .Order "perup" }}selected{{end}}>Latest show, new-old</option>
                 </select>
                 <br><br>
 
-                <b>Artist type</b><br>
+                <b>Artist Type</b><br>
                 <label>
                     <input type="checkbox" name="band" {{if .BandCheck}}checked{{end}}> Band
                 </label>
@@ -45,7 +45,7 @@
                     <input type="checkbox" name="solo" {{if .SoloCheck}}checked{{end}}> Solo act
                 </label><br><br>
 
-                <b>Starting year</b><br>
+                <b>Year Started</b><br>
                 <div>
                     <div style="display: inline-block">
                         <label>
@@ -61,7 +61,7 @@
                     </div>
                 </div><br>
 
-                <b>First album release</b><br>
+                <b>First Album Release</b><br>
                 <div>
                     <div style="display: inline-block">
                         <label>
@@ -93,7 +93,7 @@
                     </div>
                 </div><br>
 
-                <b>Countries visited</b><br>
+                <b>Countries Visited</b><br>
                 <button id="checkAll" name="all">Select All</button>
                 <button id="uncheckAll" name="all">Unselect All</button>
                 <br><br>
@@ -130,13 +130,13 @@
                                 {{range .Members}}
                                 {{.}}<br>
                                 {{end}}</p>
-                            <p><b>First album release:</b><br>
+                            <p><b>First Album Release:</b><br>
                                 {{.FAString}}</p>
                             <!-- <p><b>Concerts:</b><br>
                                 {{range .Gigs}}
                                 {{.DateStr}} {{.Locale}}, {{.Country}}<br>
                                 {{end}}</p> -->
-                            <p><a href="/groupie-tracker/artist/bio?name={{.Name}}?id={{.Id}}">Artist page</a></p>
+                            <p><a href="/groupie-tracker/artist/bio?name={{.Name}}?id={{.Id}}">Artist Page</a></p>
                         </div>
                     </div>
                 </div>

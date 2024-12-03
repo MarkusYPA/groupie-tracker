@@ -21,10 +21,11 @@ function toggleDarkMode() {
     icon.textContent = currentTheme === "dark" ? "light_mode" : "dark_mode";
 }
 
-// Scroll to the top of the page when the button is clicked
+/* // Scroll to the top of the page when the button is clicked
 function scrollToTop() {
     window.scrollTo({
         top: 0,
         behavior: "smooth"
     });
 }
+ */
