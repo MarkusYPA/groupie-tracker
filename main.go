@@ -98,7 +98,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	toDisplay := filterBy(flt, artInfos)
-	
+
 	data := homePageDataValues(flt, toDisplay)
 	if r.URL.Path == "/groupie-tracker/about" {
 		tmpl.ExecuteTemplate(w, "about.html", nil)
@@ -167,7 +167,13 @@ func goToErrorPage(errorN int, m1 string, m2 string, w http.ResponseWriter) {
 }
 
 func main() {
-	http.Handle("/static/", http.FileServer(http.Dir(".")))
+	//http.Handle("/static/", http.FileServer(http.Dir(".")))
+
+	fileServer := http.FileServer(http.Dir("."))
+	http.Handle("/static/styles.css", fileServer)
+	http.Handle("/static/sad.jpg", fileServer)
+	//http.Handle("/static/guitar.png", fileServer)
+	http.Handle("/static/ui-functions.js", fileServer)
 
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/groupie-tracker/artist/", artistHandler)
