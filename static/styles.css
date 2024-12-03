@@ -242,12 +242,14 @@ header {
     background-color: var(--light2);
     border-radius: 10px;
     /* transition: 0.2s ease-out; */
+    transition: transform 0.3s ease-in-out;
 }
 
 /* Color when clicked (.active class with JS) and hover */
 .active,
 .collapsible:hover {
     background-color: var(--light3);
+    transform: scale(1.05);
 }
 
 /* Artist Info collapsible content, hidden by default */
