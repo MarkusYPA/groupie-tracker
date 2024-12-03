@@ -79,7 +79,6 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    justify-content: center;
     overflow: hidden;
     position: fixed;
     top: 0;
@@ -91,39 +90,19 @@ header {
 
 #header-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: left;
     align-items: center;
     padding: 10px 20px;
     width: 100%;
     font-size: clamp(10.1px, 1.68vw + 5.05px, 16px);
 }
 
-#desktop-nav {
-    display: flex;
-    align-items: flex-start;
-    width: 100%;
-}
-
-#desktop-nav-list {
-    display: flex;
-    align-items: center;
-    /* Center align items vertically */
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-}
-
-#desktop-nav-list li {
-    margin-left: 20px;
-}
-
-#desktop-nav-list a {
+header a {
+    margin-right: 20px;
     text-decoration: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-align: center;
+    color: #000;
+    font-size: large;
 }
-
 
 /*this for the responsive side bar */
 
