@@ -163,14 +163,14 @@ header {
 .sidebar {
     width: 30%;
     background-color: var(--light2);
-    padding: 20px;
+    padding: 2rem;
     overflow-y: auto;
 }
 
 .content {
     flex: 1;
     width: 70%;
-    padding: 20px;
+    padding: 2rem 2rem 4rem 2rem;
     overflow-y: auto;
 }
 
@@ -366,7 +366,7 @@ footer .dark-btn .material-symbols-outlined, .back-to-top .material-symbols-outl
 .artistpage-content {
     height:fit-content;
     border-radius: 10px;
-    margin: 2rem;
+    margin: 4rem;
     background-color: var(--light3);
 }
 

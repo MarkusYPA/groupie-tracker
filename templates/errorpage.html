@@ -19,16 +19,15 @@
 {{ template "header" . }}
 
 <body>
-    <div class="container">
-        <div class="content">
-            <div class="artistbox">
+    <div class="artistpage-container">
+            <div class="artistbox" style="margin-top: 4rem;">
 
-                <div class="collapsible">
+                <div class="artistpage-collapsible" style="padding-top: 0rem;">
                     <img src="/static/sad.jpg" alt="Error image" class="artist-image" style="width: 240px;">
                     <h3 style="font-size: 1.5em;">Error {{.Error}}</h3>
                 </div>
 
-                <div class="info-column">
+                <div class="artistpage-info-column">
                     <p><b>{{.Error}} {{.Message1}}</b><br><br>
                         {{.Message2}}</p><br>
 
@@ -37,7 +36,7 @@
                 </div>
 
             </div>
-        </div>
+
     </div>
 
     {{ template "footer" . }}
