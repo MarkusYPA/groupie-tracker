@@ -183,63 +183,72 @@ func dateAndGig(rels map[string][]string) (dateGig []dateWithGig) {
 }
 
 // Function to fetch data from an artists' locations url at the "locations" API endpoint
-func fetchLocation(relURL string) (locations, error) {
+func fetchLocation(relURL string) (locations, int, string) {
 	var loc locations
 	resp, err := http.Get(relURL)
 	if err != nil {
-		return loc, err
+		return loc, http.StatusBadGateway, "Bad Getaway"
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK { // API returned a non-200 status code
+		return loc, resp.StatusCode, ""
+	}
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return loc, err
+		return loc, http.StatusInternalServerError, "Internal Server Error"
 	}
 
 	// Parse JSON into Go struct
 	err = json.Unmarshal(body, &loc)
 	if err != nil {
-		return loc, err
+		return loc, http.StatusInternalServerError, "Internal Server Error"
 	}
 
-	return loc, nil
+	return loc, http.StatusOK, ""
 }
 
 // Function to fetch data from an artists' dates url at the "dates" API endpoint
-func fetchDate(relURL string) (dates, error) {
+func fetchDate(relURL string) (dates, int, string) {
 	var dat dates
 	resp, err := http.Get(relURL)
 	if err != nil {
-		return dat, err
+		return dat, http.StatusBadGateway, "Bad Getaway"
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK { // API returned a non-200 status code
+		return dat, resp.StatusCode, ""
+	}
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return dat, err
+		return dat, http.StatusInternalServerError, "Internal Server Error"
 	}
 
 	// Parse JSON into Go struct
 	err = json.Unmarshal(body, &dat)
 	if err != nil {
-		return dat, err
+		return dat, http.StatusInternalServerError, "Internal Server Error"
 	}
 
-	return dat, nil
+	return dat, http.StatusOK, ""
 }
 
 // getGigs retrieves and parses the dates, locations and countries for an artist's concerts
-func getGigs(artist artist) ([][2]string, error) {
+func getGigs(artist artist) ([][2]string, int, string) {
 	gigs := [][2]string{}
 	gigDates := []time.Time{}
+	errorMessage := ""
 
-	loc, e2 := fetchLocation(artist.Locations)
-	if e2 != nil {
-		return gigs, e2
+	loc, status, errorMessage := fetchLocation(artist.Locations)
+	if status != http.StatusOK {
+		return gigs, status, errorMessage
 	}
-	dat, e3 := fetchDate(artist.ConcertDates)
-	if e3 != nil {
-		return gigs, e3
+	dat, status, errorMessage := fetchDate(artist.ConcertDates)
+	if status != http.StatusOK {
+		return gigs, status, errorMessage
 	}
 
 	localeIndex := -1
@@ -277,7 +286,7 @@ func getGigs(artist artist) ([][2]string, error) {
 		}
 	}
 
-	return gigs, nil
+	return gigs, http.StatusOK, ""
 }
 
 // getArtisInfo puts all the API info about an artist to a struct
@@ -295,7 +304,7 @@ func getArtisInfo(art artist, index int, ri relIndex) (artistInfo, error) {
 
 	ai.Gigs = dateAndGig(ri.Index[index].DatesLocations)
 
-	return ai, nil
+	return ai, err
 }
 
 // artistInformation combines the API information from artists and relations
@@ -312,49 +321,57 @@ func artistInformation(artists []artist, rI relIndex) ([]artistInfo, error) {
 }
 
 // Function to fetch data from the "artists" API endpoint
-func fetchArtists(artistsURL string) ([]artist, error) {
+func fetchArtists(artistsURL string) ([]artist, int, string) {
 	resp, err := http.Get(artistsURL)
 	if err != nil {
-		return artists, err
+		return artists, http.StatusBadGateway, "Bad Gateway"
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK { // non-200 status code
+		return artists, resp.StatusCode, ""
+	}
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return artists, err
+		return artists, http.StatusInternalServerError, "Internal Server Error"
 	}
 
 	// Parse JSON into Go struct
 	var artists []artist
 	err = json.Unmarshal(body, &artists)
 	if err != nil {
-		return artists, err
+		return artists, http.StatusInternalServerError, "Internal Server Error"
 	}
 
-	return artists, nil
+	return artists, http.StatusOK, ""
 }
 
 // Function to fetch data from the "relations" API endpoint
-func fetchRelations(relURL string) (relIndex, error) {
+func fetchRelations(relURL string) (relIndex, int, string) {
 	var rels relIndex
 	resp, err := http.Get(relURL)
 	if err != nil {
-		return rels, err
+		return rels, http.StatusBadGateway, "Bad Gateway"
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK { // non-200 status code
+		return rels, resp.StatusCode, ""
+	}
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return rels, err
+		return rels, http.StatusInternalServerError, "Internal Server Error"
 	}
 
 	// Parse JSON into Go struct
 	err = json.Unmarshal(body, &rels)
 	if err != nil {
-		return rels, err
+		return rels, http.StatusInternalServerError, "Internal Server Error"
 	}
 
-	return rels, nil
+	return rels, http.StatusOK, ""
 }
 
 // fetchAPI parses JSON into a Go struct to extract URLs
@@ -368,10 +385,15 @@ func fetchAPI(body []byte) (APIResponse, error) {
 func readAPI(w http.ResponseWriter) {
 	resp, err := http.Get("https://groupietrackers.herokuapp.com/api")
 	if err != nil {
-		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Failed to fetch data from API", w)
+		goToErrorPage(http.StatusBadGateway, "Bad Getaway", "Failed to fetch data from API", w)
 		return
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK { // non-200 status code
+		goToErrorPage(resp.StatusCode, "", "Failed to fetch data from API", w)
+		return
+	}
 
 	// Read the response body
 	body, err := io.ReadAll(resp.Body)
@@ -385,19 +407,21 @@ func readAPI(w http.ResponseWriter) {
 		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error parsing API JSON: "+err.Error(), w)
 		return
 	}
-	artists, err = fetchArtists(apiData.ArtistsUrl)
-	if err != nil {
-		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error reading artist API: "+err.Error(), w)
+	var status int
+	var errorMEssage string
+	artists, status, errorMEssage = fetchArtists(apiData.ArtistsUrl)
+	if status != http.StatusOK {
+		goToErrorPage(status, errorMEssage, "Error reading artist API", w)
 		return
 	}
-	relationIndex, err = fetchRelations(apiData.RelationUrl)
-	if err != nil {
-		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error reading relations API: "+err.Error(), w)
+	relationIndex, status, errorMEssage = fetchRelations(apiData.RelationUrl)
+	if status != http.StatusOK {
+		goToErrorPage(status, errorMEssage, "Error reading relations API", w)
 		return
 	}
 	artInfos, err = artistInformation(artists, relationIndex)
-	if err != nil {
-		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Failed to fetch data from API", w)
+	if err != nil { // Error parsing date
+		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", err.Error(), w)
 		return
 	}
 	fillAllCountries(artInfos)

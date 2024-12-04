@@ -150,9 +150,11 @@ func artistHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dataAP.Gigs, err = getGigs(arti)
-	if err != nil {
-		goToErrorPage(http.StatusBadRequest, "Bad Request", "Failed to fetch data from API: "+err.Error(), w) // Error 400
+	var status int
+	errorMsg := ""
+	dataAP.Gigs, status, errorMsg = getGigs(arti)
+	if status != http.StatusOK {
+		goToErrorPage(http.StatusBadRequest, errorMsg, "Failed to fetch data from API", w) // Error 400
 		return
 	}
 
