@@ -231,6 +231,7 @@ func fetchDate(relURL string) (dates, error) {
 // getGigs retrieves and parses the dates, locations and countries for an artist's concerts
 func getGigs(artist artist) ([][2]string, error) {
 	gigs := [][2]string{}
+	gigDates := []time.Time{}
 
 	loc, e2 := fetchLocation(artist.Locations)
 	if e2 != nil {
@@ -256,8 +257,24 @@ func getGigs(artist artist) ([][2]string, error) {
 		}
 		locale, cou := beautifyLocation(loc.Locales[localeIndex])
 		dateStr := dat.Format("Jan. 2, 2006")
+		if len(dateStr) > 4 && dateStr[6] == ',' {
+			dateStr = dateStr[:4] + " " + dateStr[4:] // add space to single digit days so row lengths match
+		}
 
 		gigs = append(gigs, [2]string{dateStr, locale + ", " + cou})
+		gigDates = append(gigDates, dat)
+	}
+
+	// Sort gigs from oldest to newest
+	if len(gigs) == len(gigDates) {
+		for i := 0; i < len(gigs)-1; i++ {
+			for j := i + 1; j < len(gigs); j++ {
+				if gigDates[i].After(gigDates[j]) {
+					gigs[i], gigs[j] = gigs[j], gigs[i]
+					gigDates[i], gigDates[j] = gigDates[j], gigDates[i]
+				}
+			}
+		}
 	}
 
 	return gigs, nil
@@ -268,6 +285,7 @@ func getArtisInfo(art artist, index int, ri relIndex) (artistInfo, error) {
 	ai := artistInfo{}
 	ai.Id, ai.Name, ai.Image = art.Id, art.Name, art.Image
 	ai.Members, ai.CreDate = art.Members, art.CreDate
+
 	albumDate, err := time.Parse("02-01-2006", art.FirstAlbum)
 	if err != nil {
 		fmt.Println("Error parsing date:", err)
@@ -289,7 +307,6 @@ func artistInformation(artists []artist, rI relIndex) ([]artistInfo, error) {
 			return artInfos, err
 		}
 		artInfos = append(artInfos, info)
-
 	}
 	return artInfos, nil
 }

@@ -7,7 +7,6 @@ x Generate min and max values automatically
     . Maybe create a custom page to display them
     . 404
     . 500 especially. Are there 504, 505 etc. errors?
-- A bit silly to display the raw API info on the artist page like that
 - Could the buttons, dropdowns, number selections or checkboxes be prettier?
     . Javascript?
     . A double slider could be nice for ranges, but a bit exessive and possibly messy code
@@ -20,7 +19,6 @@ Bonus:
     - Deploy the site. Where? How do you set up your own server online?
 
     basic
-    - No unnecessary data requests: It's reading API only once, but is it foolproof?
-        .Is that what it means?
+    x No unnecessary data requests
     - Testfile? Could be difficult but it is recommended.
 
