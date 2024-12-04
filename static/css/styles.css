@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Silkscreen&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
+
+@import "homepage.css";
+@import "headerfooter.css";
+@import "darkmode.css";
+@import "artistpage.css";
+
+/* Pseudo-class for variables */
+:root {
+
+    /* light mode */
+    --light1: rgb(230, 230, 230);
+    --light2: rgb(200, 200, 200);
+    --light3: rgb(165, 165, 165);
+    --light4: rgb(50, 50, 50);
+    --light-shadow: rgba(104, 104, 104, 0.244);
+
+    /* dark mode */
+    --dark1: rgb(60, 60, 60);
+    --dark2: rgb(40, 40, 40);
+    --dark3: rgb(20, 20, 20);
+    --dark4: black;
+    --dark-shadow: rgba(255, 255, 255, 0.05);
+    --dark-text: white;
+
+    /* used during both */
+    --neutral-text: rgb(120, 120, 120);
+}
+
+body {
+    font-family: 'Silkscreen', monospace;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    min-height: 100vh;
+    /* Adapt to screen height */
+    padding-top: 3rem;
+    padding-bottom: 2rem;
+    /* So header/footer doesn't cover any text */
+
+}
+
+h1 {
+    font-family: 'Silkscreen', monospace;
+    font-size: clamp(20.2px, 3.37vw + 10.11px, 32px);
+    margin: 0%;
+}
+
+h3 {
+    font-family: 'Silkscreen', monospace;
+    /* font-size: 1.17em; */ 
+    font-size: clamp(12px, 2vw + 6px, 19px);  /* font sizes change at 300-650 px view width */ 
+    text-align: center;
+    /* transition: 0.2s ease-out; */
+    text-wrap: wrap;
+
+}
+
+p {
+    font-family: 'Space Mono', monospace;
+    margin: 0 0 10px 0;
+}

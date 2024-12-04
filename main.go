@@ -171,7 +171,11 @@ func main() {
 	//http.Handle("/static/", http.FileServer(http.Dir(".")))
 
 	fileServer := http.FileServer(http.Dir("."))
-	http.Handle("/static/styles.css", fileServer)
+	http.Handle("/static/css/styles.css", fileServer)
+	http.Handle("/static/css/homepage.css", fileServer)
+	http.Handle("/static/css/headerfooter.css", fileServer)
+	http.Handle("/static/css/artistpage.css", fileServer)
+	http.Handle("/static/css/darkmode.css", fileServer)
 	http.Handle("/static/sad.jpg", fileServer)
 	http.Handle("/static/guitarbrown.png", fileServer)
 	http.Handle("/static/home-functions.js", fileServer)

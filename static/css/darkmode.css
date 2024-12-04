@@ -1,0 +1,44 @@
+
+/* Dark Mode */
+
+.dark-mode,
+.dark-mode .content,
+.dark-mode .artistpage-container {
+    background-color: var(--dark1);
+    color: var(--dark-text);
+}
+
+.dark-mode .sidebar,
+.dark-mode .collapsible,
+.dark-mode .collapse-content,
+.dark-mode .info-column,
+.dark-mode .artistpage-info-column {
+    background-color: var(--dark2);
+    color: var(--dark-text);
+}
+
+.dark-mode .active,
+.dark-mode .collapsible:hover {
+    background-color: var(--dark3);
+}
+
+.dark-mode .artistbox,
+.dark-mode .artistpage-content {
+    background-color: var(--dark3);
+    color: var(--dark-text);
+}
+
+.dark-mode .artistbox,
+.dark-mode .artistpage-content {
+    box-shadow: 6px 8px 10px var(--dark-shadow);
+}
+
+.dark-mode header,
+.dark-mode footer {
+    background-color: var(--dark3);
+    color: var(--dark-text);
+}
+
+.dark-mode a {
+    color: #04ff00;
+}

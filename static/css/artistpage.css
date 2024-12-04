@@ -1,0 +1,47 @@
+
+/* Artist Page Styles  */
+
+.artistpage-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    justify-content: center;
+    background-color: var(--light1);
+    padding-top: 3rem;
+}
+
+.artistpage-content {
+    height: fit-content;
+    border-radius: 10px;
+    margin: 4rem 0rem 4rem 0rem;
+    box-shadow: 6px 8px 10px var(--light-shadow);
+    background-color: var(--light3);
+}
+
+.artistpage-collapsible {
+    text-align: center;
+    padding-top: 1.5rem;
+}
+
+.artistpage-info-column {
+    font-family: 'Space Mono', monospace;
+    border-radius: 0px 0px 10px 10px;
+    padding: 1.5rem;
+    background-color: var(--light2);
+
+    font-size: clamp(10.1px, 1.68vw + 5.05px, 16px);
+}
+
+.artistpage-concert-list {
+    border-collapse: collapse;
+}
+
+.artistpage-concert-list td {
+    padding: 0px;
+}
+
+.artistpage-concert-list td.date {
+    width: 0%;
+    padding-right: 2rem;
+    white-space: nowrap;
+}
