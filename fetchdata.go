@@ -294,53 +294,30 @@ func artistInformation(artists []artist, rI relIndex) ([]artistInfo, error) {
 	return artInfos, nil
 }
 
-// fetchAPI parses JSON into a Go struct to extract URLs
-func fetchAPI(body []byte) (APIResponse, error) {
-	var apiData APIResponse
-	err := json.Unmarshal(body, &apiData)
-	return apiData, err
-}
-
 // readAPI gets the data from the given API and stores it into some global variables
 func readAPI(w http.ResponseWriter) {
-	resp, err := http.Get("https://groupietrackers.herokuapp.com/api")
-	if err != nil {
-		goToErrorPage(http.StatusBadGateway, "Bad Getaway", "Failed to fetch data from API", w)
-		return
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK { // non-200 status code
-		goToErrorPage(resp.StatusCode, "", "Failed to fetch data from API", w)
-		return
-	}
-
-	// Read the response body
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error reading response", w)
-		return
-	}
-
-	apiData, err = fetchAPI(body)
-	if err != nil {
-		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error parsing API JSON: "+err.Error(), w)
-		return
-	}
 	var status int
-	var errorMEssage string
-	status, errorMEssage = fetchFromAPI(apiData.ArtistsUrl, &artists)
+	var errorMessage string
+
+	status, errorMessage = fetchFromAPI("https://groupietrackers.herokuapp.com/api", &apiData)
 	if status != http.StatusOK {
-		goToErrorPage(status, errorMEssage, "Error reading artist API", w)
+		goToErrorPage(status, errorMessage, "Error parsing API JSON", w)
 		return
 	}
 
-	status, errorMEssage = fetchFromAPI(apiData.RelationUrl, &relationIndex)
+	status, errorMessage = fetchFromAPI(apiData.ArtistsUrl, &artists)
+	if status != http.StatusOK {
+		goToErrorPage(status, errorMessage, "Error reading artist API", w)
+		return
+	}
+
+	status, errorMessage = fetchFromAPI(apiData.RelationUrl, &relationIndex)
 	if status != http.StatusOK {
 		fmt.Println(relationIndex)
-		goToErrorPage(status, errorMEssage, "Error reading relations API", w)
+		goToErrorPage(status, errorMessage, "Error reading relations API", w)
 		return
 	}
+	var err error
 	artInfos, err = artistInformation(artists, relationIndex)
 	if err != nil { // Error parsing date
 		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", err.Error(), w)
