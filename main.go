@@ -77,7 +77,6 @@ func homePageDataValues(f filter, ais []artistInfo) HomePageData {
 
 // handler for the homepage
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-
 	if r.URL.Path != "/" && r.URL.Path != "/groupie-tracker" && r.URL.Path != "/groupie-tracker/about" {
 		goToErrorPage(http.StatusNotFound, "Not Found", `Page doesn't exist`, w) // Error 404
 		fmt.Println("Bad url path:", r.URL.Path)
