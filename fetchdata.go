@@ -134,7 +134,7 @@ func beautifyLocation(s string) (string, string) {
 func fetchFromAPI(relURL string, dataIn interface{}) (int, string) {
 	resp, err := http.Get(relURL)
 	if err != nil {
-		return http.StatusBadGateway, "Bad Getaway"
+		return http.StatusBadGateway, "Bad Gateway"
 	}
 	defer resp.Body.Close()
 

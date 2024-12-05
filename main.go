@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 )
@@ -110,43 +111,80 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "index.html", data)
 }
 
-// artistHandler serves a site for a specific artist
-func artistHandler(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.String()[strings.LastIndex(r.URL.String(), "=")+1:]
-	artistID, err := strconv.Atoi(id)
+func artistNameAndId(name *string, artistID *int, w http.ResponseWriter, r *http.Request) {
+	// Get name and id from url
+	idStart := strings.LastIndex(r.URL.String(), "=") + 1
+	nameStart := strings.Index(r.URL.String(), "=") + 1
+	nameEnd := strings.Index(r.URL.String(), `&`)
+	if idStart < 0 || nameStart < 0 || nameEnd < 0 || nameEnd <= nameStart {
+		goToErrorPage(http.StatusBadRequest, "Bad Request", "Invalid artist URL", w) // Error 400
+		return
+	}
+	id := r.URL.String()[idStart:]
+	nameInURL := r.URL.String()[nameStart:nameEnd]
+	var err error
+	*name, err = url.QueryUnescape(nameInURL)
+	if err != nil {
+		goToErrorPage(http.StatusBadRequest, "Bad Request", "Invalid artist URL", w) // Error 400
+		return
+	}
+	*artistID, err = strconv.Atoi(id)
 	if err != nil {
 		goToErrorPage(http.StatusBadRequest, "Bad Request", "Invalid artist ID: "+err.Error(), w) // Error 400
 		return
 	}
+}
+
+// artistHandler serves a site for a specific artist
+func artistHandler(w http.ResponseWriter, r *http.Request) {
+	var name string
+	var artistID int
+	artistNameAndId(&name, &artistID, w, r)
 
 	if len(artInfos) == 0 { // In case someone navigates to an artist page directly
 		readAPI(w)
 	}
 
 	var dataAP artisPageData
-	var found1 bool
+	var foundId bool
+	var foundName bool
+	var foundBoth bool
 	for _, ai := range artInfos {
 		if ai.Id == artistID {
+			foundId = true
+		}
+		if ai.Name == name {
+			foundName = true
+		}
+		if ai.Id == artistID && ai.Name == name {
+			foundBoth = true
 			dataAP.Artist = ai
-			found1 = true
-			break
 		}
 	}
-	if !found1 {
+	id := strconv.Itoa(artistID)
+	if !foundId {
 		goToErrorPage(http.StatusNotFound, "Not Found", "Artist "+id+` doesn't exist`, w) // Error 404
+		return
+	}
+	if !foundName {
+		goToErrorPage(http.StatusNotFound, "Not Found", "Artist "+name+` doesn't exist`, w) // Error 404
+		return
+	}
+	if !foundBoth {
+		goToErrorPage(http.StatusBadRequest, "Bad Request", "Name "+name+" and ID "+id+` don't match`, w) // Error 400
 		return
 	}
 
 	var arti artist
-	var found2 bool
+	var found3 bool
 	for _, a := range artists {
 		if a.Id == artistID {
 			arti = a
-			found2 = true
+			found3 = true
 			break
 		}
 	}
-	if !found2 {
+	if !found3 {
 		goToErrorPage(http.StatusNotFound, "Not Found", "Artist "+id+` doesn't exist`, w) // Error 404
 		return
 	}
