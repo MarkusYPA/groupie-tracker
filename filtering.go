@@ -24,15 +24,15 @@ var (
 func getMinMaxLimits() [6]int {
 	startMin, startMax, albumMin, albumMax, showMin, showMax := 1950, 2024, 1950, 2024, 1950, 2024
 	if len(artInfos) > 0 {
-		startMin, startMax, albumMin, albumMax = artInfos[0].CreDate, artInfos[0].CreDate, artInfos[0].FirstAlbum.Year(), artInfos[0].FirstAlbum.Year()
+		startMin, startMax, albumMin, albumMax = artInfos[0].StartDate, artInfos[0].StartDate, artInfos[0].FirstAlbum.Year(), artInfos[0].FirstAlbum.Year()
 		showMin, showMax = artInfos[0].Gigs[0].Date.Year(), artInfos[0].Gigs[0].Date.Year()
 	}
 	for _, ai := range artInfos {
-		if ai.CreDate < startMin {
-			startMin = ai.CreDate
+		if ai.StartDate < startMin {
+			startMin = ai.StartDate
 		}
-		if ai.CreDate > startMax {
-			startMax = ai.CreDate
+		if ai.StartDate > startMax {
+			startMax = ai.StartDate
 		}
 		if ai.FirstAlbum.Year() < albumMin {
 			albumMin = ai.FirstAlbum.Year()
@@ -118,7 +118,7 @@ func compare(a1, a2 artistInfo, s string) bool {
 	case "namedown":
 		return a1.Name <= a2.Name
 	case "fodown":
-		return a1.CreDate <= a2.CreDate
+		return a1.StartDate <= a2.StartDate
 	case "fadown":
 		return a1.FirstAlbum.Before(a2.FirstAlbum)
 	case "perdown":
@@ -126,7 +126,7 @@ func compare(a1, a2 artistInfo, s string) bool {
 	case "nameup":
 		return a1.Name > a2.Name
 	case "foup":
-		return a1.CreDate > a2.CreDate
+		return a1.StartDate > a2.StartDate
 	case "faup":
 		return a1.FirstAlbum.After(a2.FirstAlbum)
 	case "perup":
@@ -151,7 +151,7 @@ func filterBy(fil filter, arInfos []artistInfo) []artistInfo {
 	aisOut := []artistInfo{}
 	for _, ai := range arInfos {
 		passes := true
-		if ai.CreDate < fil.created[0] || ai.CreDate > fil.created[1] {
+		if ai.StartDate < fil.created[0] || ai.StartDate > fil.created[1] {
 			passes = false
 		}
 		if ai.FirstAlbum.Year() < fil.firstAl[0] || ai.FirstAlbum.Year() > fil.firstAl[1] {

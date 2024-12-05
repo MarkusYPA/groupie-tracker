@@ -81,10 +81,19 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if r.URL.Path == "/groupie-tracker/about" {
+		tmpl.ExecuteTemplate(w, "about.html", nil)
+	}
+
 	if firstLoad {
-		readAPI(w)
+		err := readAPI(w)
 		flt = defaultFilter()
-		firstLoad = false
+		if err == nil {
+			firstLoad = false
+		} else {
+			fmt.Println(err.Error(), firstLoad)
+			return
+		}
 	}
 
 	if r.Method == http.MethodPost && r.FormValue("reset") != "rd" {
@@ -96,14 +105,9 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	toDisplay := filterBy(flt, artInfos)
-
 	data := homePageDataValues(flt, toDisplay)
-	if r.URL.Path == "/groupie-tracker/about" {
-		tmpl.ExecuteTemplate(w, "about.html", nil)
-	} else {
-		tmpl.ExecuteTemplate(w, "index.html", data)
-	}
 
+	tmpl.ExecuteTemplate(w, "index.html", data)
 }
 
 // artistHandler serves a site for a specific artist

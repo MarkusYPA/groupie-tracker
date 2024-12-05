@@ -24,7 +24,7 @@ type artist struct {
 	Image        string   `json:"image"`
 	Name         string   `json:"name"`
 	Members      []string `json:"members"`
-	CreDate      int      `json:"creationDate"`
+	StartDate    int      `json:"creationDate"`
 	FirstAlbum   string   `json:"firstAlbum"`
 	Locations    string   `json:"locations"`
 	ConcertDates string   `json:"concertDates"`
@@ -68,7 +68,7 @@ type artistInfo struct {
 	Name       string
 	Image      string
 	Members    []string
-	CreDate    int
+	StartDate  int
 	FirstAlbum time.Time
 	FAString   string
 	Gigs       []dateWithGig
@@ -242,7 +242,7 @@ func dateAndGig(rels map[string][]string) (dateGig []dateWithGig) {
 func getArtisInfo(art artist, index int, ri relIndex) (artistInfo, error) {
 	ai := artistInfo{}
 	ai.Id, ai.Name, ai.Image = art.Id, art.Name, art.Image
-	ai.Members, ai.CreDate = art.Members, art.CreDate
+	ai.Members, ai.StartDate = art.Members, art.StartDate
 
 	albumDate, err := time.Parse("02-01-2006", art.FirstAlbum)
 	if err != nil {
@@ -295,33 +295,35 @@ func fillAllCountries(ais []artistInfo) {
 }
 
 // readAPI gets the data from the given API and stores it into some global variables
-func readAPI(w http.ResponseWriter) {
+func readAPI(w http.ResponseWriter) error {
 	var status int
 	var errorMessage string
+	var err error
 
 	status, errorMessage = fetchFromAPI("https://groupietrackers.herokuapp.com/api", &apiData)
 	if status != http.StatusOK {
 		goToErrorPage(status, errorMessage, "Error parsing API JSON", w)
-		return
+		return fmt.Errorf("error parsing API JSON")
 	}
 
 	status, errorMessage = fetchFromAPI(apiData.ArtistsUrl, &artists)
 	if status != http.StatusOK {
 		goToErrorPage(status, errorMessage, "Error reading artist API", w)
-		return
+		return fmt.Errorf("error reading artist API")
 	}
 
 	status, errorMessage = fetchFromAPI(apiData.RelationUrl, &relationIndex)
 	if status != http.StatusOK {
-		fmt.Println(relationIndex)
+		fmt.Println("Status code:", status)
 		goToErrorPage(status, errorMessage, "Error reading relations API", w)
-		return
+		return fmt.Errorf("error reading relations API")
 	}
-	var err error
+
 	artInfos, err = artistInformation(artists, relationIndex)
 	if err != nil { // Error parsing date
 		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", err.Error(), w)
-		return
+		return fmt.Errorf("internal Server Error")
 	}
 	fillAllCountries(artInfos)
+	return nil
 }
