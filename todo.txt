@@ -10,6 +10,11 @@ x Generate min and max values automatically
 - Could the buttons, dropdowns, number selections or checkboxes be prettier?
     . Javascript?
     . A double slider could be nice for ranges, but a bit exessive and possibly messy code
+- Should ReadAPI happen in main?
+    . Site would work faster and be ready for the user right at the start
+    . Home and artist handler code would be a little simpler
+    . User would get the API as it was when the server was started, not the latest
+    . So no, let's not change it
 
 
 Bonus:

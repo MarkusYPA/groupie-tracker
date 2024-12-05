@@ -10,46 +10,46 @@ type filter struct {
 	order     string
 	created   [2]int
 	firstAl   [2]int
-	recPerf   [2]int
+	recShow   [2]int
 	band      bool
 	solo      bool
 	countries []bool
 }
 
 var (
-	minmaxFirst [6]int
+	minmaxLimits [6]int
 )
 
-// getMinMax retrieves the minimun and maximum values for three ranges in the filter
-func getMinMax() (int, int, int, int, int, int) {
-	formMin, formMax, fAMin, fAMax, peMin, peMax := 1950, 2024, 1950, 2024, 1950, 2024
+// getMinMaxLimits retrieves the minimun and maximum values for three ranges in the filter
+func getMinMaxLimits() [6]int {
+	startMin, startMax, albumMin, albumMax, showMin, showMax := 1950, 2024, 1950, 2024, 1950, 2024
 	if len(artInfos) > 0 {
-		formMin, formMax, fAMin, fAMax = artInfos[0].CreDate, artInfos[0].CreDate, artInfos[0].FirstAlbum.Year(), artInfos[0].FirstAlbum.Year()
-		peMin, peMax = artInfos[0].Gigs[0].Date.Year(), artInfos[0].Gigs[0].Date.Year()
+		startMin, startMax, albumMin, albumMax = artInfos[0].CreDate, artInfos[0].CreDate, artInfos[0].FirstAlbum.Year(), artInfos[0].FirstAlbum.Year()
+		showMin, showMax = artInfos[0].Gigs[0].Date.Year(), artInfos[0].Gigs[0].Date.Year()
 	}
 	for _, ai := range artInfos {
-		if ai.CreDate < formMin {
-			formMin = ai.CreDate
+		if ai.CreDate < startMin {
+			startMin = ai.CreDate
 		}
-		if ai.CreDate > formMax {
-			formMax = ai.CreDate
+		if ai.CreDate > startMax {
+			startMax = ai.CreDate
 		}
-		if ai.FirstAlbum.Year() < fAMin {
-			fAMin = ai.FirstAlbum.Year()
+		if ai.FirstAlbum.Year() < albumMin {
+			albumMin = ai.FirstAlbum.Year()
 		}
-		if ai.FirstAlbum.Year() > fAMax {
-			fAMax = ai.FirstAlbum.Year()
+		if ai.FirstAlbum.Year() > albumMax {
+			albumMax = ai.FirstAlbum.Year()
 		}
 		for _, gig := range ai.Gigs {
-			if gig.Date.Year() < peMin {
-				peMin = ai.Gigs[0].Date.Year()
+			if gig.Date.Year() < showMin {
+				showMin = ai.Gigs[0].Date.Year()
 			}
-			if gig.Date.Year() > peMax {
-				peMax = ai.Gigs[0].Date.Year()
+			if gig.Date.Year() > showMax {
+				showMax = ai.Gigs[0].Date.Year()
 			}
 		}
 	}
-	return formMin, formMax, fAMin, fAMax, peMin, peMax
+	return [6]int{startMin, startMax, albumMin, albumMax, showMin, showMax}
 }
 
 // defaultFilter sets the filter values to default
@@ -62,14 +62,13 @@ func defaultFilter() filter {
 	ord := "namedown"
 	showBand := true
 	showSolo := true
-	formMin, formMax, fAMin, fAMax, peMin, peMax := getMinMax()
-	minmaxFirst = [6]int{formMin, formMax, fAMin, fAMax, peMin, peMax}
+	minmaxLimits = getMinMaxLimits()
 
 	return filter{
 		order:     ord,
-		created:   [2]int{formMin, formMax},
-		firstAl:   [2]int{fAMin, fAMax},
-		recPerf:   [2]int{peMin, peMax},
+		created:   [2]int{minmaxLimits[0], minmaxLimits[1]},
+		firstAl:   [2]int{minmaxLimits[2], minmaxLimits[3]},
+		recShow:   [2]int{minmaxLimits[4], minmaxLimits[5]},
 		band:      showBand,
 		solo:      showSolo,
 		countries: countries,
@@ -81,20 +80,20 @@ func newFilter(r *http.Request) filter {
 	ord := r.FormValue("order")
 	showBand := r.FormValue("band") == "on"
 	showSolo := r.FormValue("solo") == "on"
-	formMin, _ := strconv.Atoi(r.FormValue("fomin"))
-	formMax, _ := strconv.Atoi(r.FormValue("fomax"))
-	if formMax < formMin {
-		formMax = formMin
+	startMin, _ := strconv.Atoi(r.FormValue("fomin"))
+	startMax, _ := strconv.Atoi(r.FormValue("fomax"))
+	if startMax < startMin {
+		startMax = startMin
 	}
-	fAMin, _ := strconv.Atoi(r.FormValue("famin"))
-	fAMax, _ := strconv.Atoi(r.FormValue("famax"))
-	if fAMax < fAMin {
-		fAMax = fAMin
+	albumMin, _ := strconv.Atoi(r.FormValue("famin"))
+	albumMax, _ := strconv.Atoi(r.FormValue("famax"))
+	if albumMax < albumMin {
+		albumMax = albumMin
 	}
-	peMin, _ := strconv.Atoi(r.FormValue("pemin"))
-	peMax, _ := strconv.Atoi(r.FormValue("pemax"))
-	if peMax < peMin {
-		peMax = peMin
+	showMin, _ := strconv.Atoi(r.FormValue("pemin"))
+	showMax, _ := strconv.Atoi(r.FormValue("pemax"))
+	if showMax < showMin {
+		showMax = showMin
 	}
 
 	countries := make([]bool, len(allCountries))
@@ -104,9 +103,9 @@ func newFilter(r *http.Request) filter {
 
 	return filter{
 		order:     ord,
-		created:   [2]int{formMin, formMax},
-		firstAl:   [2]int{fAMin, fAMax},
-		recPerf:   [2]int{peMin, peMax},
+		created:   [2]int{startMin, startMax},
+		firstAl:   [2]int{albumMin, albumMax},
+		recShow:   [2]int{showMin, showMax},
 		band:      showBand,
 		solo:      showSolo,
 		countries: countries,
@@ -158,7 +157,7 @@ func filterBy(fil filter, arInfos []artistInfo) []artistInfo {
 		if ai.FirstAlbum.Year() < fil.firstAl[0] || ai.FirstAlbum.Year() > fil.firstAl[1] {
 			passes = false
 		}
-		if ai.Gigs[0].Date.Year() < fil.recPerf[0] || ai.Gigs[0].Date.Year() > fil.recPerf[1] {
+		if ai.Gigs[0].Date.Year() < fil.recShow[0] || ai.Gigs[0].Date.Year() > fil.recShow[1] {
 			passes = false
 		}
 		if !fil.band && len(ai.Members) > 1 {

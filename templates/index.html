@@ -49,13 +49,13 @@
                 <div>
                     <div style="display: inline-block">
                         <label>
-                            From: <input type="number" name="fomin" value="{{.CreMin}}" min="{{index .MinMax 0}}"
+                            From: <input type="number" name="fomin" value="{{.StartMin}}" min="{{index .MinMax 0}}"
                                 max="{{index .MinMax 1}}" />
                         </label>
                     </div>
                     <div style="display: inline-block">
                         <label>
-                            &nbsp;&nbsp;To: <input type="number" name="fomax" value="{{.CreMax}}"
+                            &nbsp;&nbsp;To: <input type="number" name="fomax" value="{{.StartMax}}"
                                 min="{{index .MinMax 0}}" max="{{index .MinMax 1}}" />
                         </label>
                     </div>
@@ -65,13 +65,13 @@
                 <div>
                     <div style="display: inline-block">
                         <label>
-                            From: <input type="number" name="famin" value="{{.FiAlMin}}" min="{{index .MinMax 2}}"
+                            From: <input type="number" name="famin" value="{{.AlbumMin}}" min="{{index .MinMax 2}}"
                                 max="{{index .MinMax 3}}" />
                         </label>
                     </div>
                     <div style="display: inline-block">
                         <label>
-                            &nbsp;&nbsp;To: <input type="number" name="famax" value="{{.FiAlMax}}"
+                            &nbsp;&nbsp;To: <input type="number" name="famax" value="{{.AlbumMax}}"
                                 min="{{index .MinMax 2}}" max="{{index .MinMax 3}}" />
                         </label>
                     </div>
@@ -81,13 +81,13 @@
                 <div>
                     <div style="display: inline-block">
                         <label>
-                            From: <input type="number" name="pemin" value="{{.PeMin}}" min="{{index .MinMax 4}}"
+                            From: <input type="number" name="pemin" value="{{.ShowMin}}" min="{{index .MinMax 4}}"
                                 max="{{index .MinMax 5}}" />
                         </label>
                     </div>
                     <div style="display: inline-block">
                         <label>
-                            &nbsp;&nbsp;To: <input type="number" name="pemax" value="{{.PeMax}}"
+                            &nbsp;&nbsp;To: <input type="number" name="pemax" value="{{.ShowMax}}"
                                 min="{{index .MinMax 4}}" max="{{index .MinMax 5}}" />
                         </label>
                     </div>
@@ -132,10 +132,6 @@
                                 {{end}}</p>
                             <p><b>First Album Release:</b><br>
                                 {{.FAString}}</p>
-                            <!-- <p><b>Concerts:</b><br>
-                                {{range .Gigs}}
-                                {{.DateStr}} {{.Locale}}, {{.Country}}<br>
-                                {{end}}</p> -->
                             <p><a href="/groupie-tracker/artist/bio?name={{.Name}}?id={{.Id}}">Artist Page</a></p>
                         </div>
                     </div>

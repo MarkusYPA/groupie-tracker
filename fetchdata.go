@@ -11,7 +11,7 @@ import (
 )
 
 // URLs from the initial API response
-type APIResponse struct {
+type apiResponse struct {
 	ArtistsUrl   string `json:"artists"`
 	LocationsUrl string `json:"locations"`
 	DatesUrl     string `json:"dates"`
@@ -76,43 +76,18 @@ type artistInfo struct {
 
 var (
 	allCountries  []string
-	apiData       APIResponse
+	apiData       apiResponse
 	artInfos      []artistInfo
 	artists       []artist
 	relationIndex relIndex
 )
-
-func fillAllCountries(ais []artistInfo) {
-	// Place all country names on slice
-	for _, ai := range ais {
-		for _, g := range ai.Gigs {
-			found := false
-			for _, c := range allCountries {
-				if c == g.Country {
-					found = true
-				}
-			}
-			if !found {
-				allCountries = append(allCountries, g.Country)
-			}
-		}
-	}
-	// Sort slice alphabetically
-	for i := 0; i < len(allCountries)-1; i++ {
-		for j := i + 1; j < len(allCountries); j++ {
-			if allCountries[i] > allCountries[j] {
-				allCountries[i], allCountries[j] = allCountries[j], allCountries[i]
-			}
-		}
-	}
-}
 
 // beautifyLocation returns the location and country of a concert, written all nicely
 func beautifyLocation(s string) (string, string) {
 	name := ""
 	// separate location and country
 	placeCountry := strings.Split(s, "-")
-	for iWd, wd := range placeCountry {
+	for indexWd, wd := range placeCountry {
 		if wd == "usa" || wd == "uk" {
 			name += strings.ToUpper(wd)
 			continue
@@ -148,38 +123,11 @@ func beautifyLocation(s string) (string, string) {
 				name += " "
 			}
 		}
-		if iWd == 0 {
+		if indexWd == 0 {
 			name += ","
 		}
 	}
 	return strings.Split(name, ",")[0], strings.Split(name, ",")[1]
-}
-
-// dateAndGig writes parsed dates, formatted dates and nicely spelled countries and locations to a slice of structs
-func dateAndGig(rels map[string][]string) (dateGig []dateWithGig) {
-	// parse time from string and combine with location
-	for place, sli := range rels {
-		for _, dateRaw := range sli {
-			dat, err := time.Parse("02-01-2006", dateRaw)
-			if err != nil {
-				fmt.Println("Error parsing date:", err)
-				continue
-			}
-			loc, cou := beautifyLocation(place)
-			dateGig = append(dateGig, dateWithGig{Date: dat, DateStr: dat.Format("Jan. 2, 2006"), Locale: loc, Country: cou})
-		}
-	}
-
-	// Put most recent gigs first
-	for i := 0; i < len(dateGig)-1; i++ {
-		for j := i + 1; j < len(dateGig); j++ {
-			if dateGig[i].Date.Before(dateGig[j].Date) {
-				dateGig[i], dateGig[j] = dateGig[j], dateGig[i]
-			}
-		}
-	}
-
-	return
 }
 
 // Function to fetch data the four different API endpoints
@@ -190,7 +138,8 @@ func fetchFromAPI(relURL string, dataIn interface{}) (int, string) {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK { // API returned a non-200 status code
+	// API returned a non-200 status code
+	if resp.StatusCode != http.StatusOK {
 		return resp.StatusCode, ""
 	}
 
@@ -227,13 +176,12 @@ func getGigs(artist artist) ([][2]string, int, string) {
 
 	localeIndex := -1
 	for _, day := range dat.Dates {
-		daymod := day
 		if day[0] == '*' {
 			localeIndex++
-			daymod = day[1:]
+			day = day[1:]
 		}
 
-		dat, err := time.Parse("02-01-2006", daymod)
+		dat, err := time.Parse("02-01-2006", day)
 		if err != nil {
 			fmt.Println("Error parsing date:", err)
 			continue
@@ -248,11 +196,11 @@ func getGigs(artist artist) ([][2]string, int, string) {
 		gigDates = append(gigDates, dat)
 	}
 
-	// Sort gigs from oldest to newest
+	// Sort gigs from newest to oldest
 	if len(gigs) == len(gigDates) {
 		for i := 0; i < len(gigs)-1; i++ {
 			for j := i + 1; j < len(gigs); j++ {
-				if gigDates[i].After(gigDates[j]) {
+				if gigDates[i].Before(gigDates[j]) {
 					gigs[i], gigs[j] = gigs[j], gigs[i]
 					gigDates[i], gigDates[j] = gigDates[j], gigDates[i]
 				}
@@ -261,6 +209,33 @@ func getGigs(artist artist) ([][2]string, int, string) {
 	}
 
 	return gigs, http.StatusOK, ""
+}
+
+// dateAndGig writes parsed dates, formatted dates and nicely spelled countries and locations to a slice of structs
+func dateAndGig(rels map[string][]string) (dateGig []dateWithGig) {
+	// parse time from string and combine with location
+	for place, sli := range rels {
+		for _, dateRaw := range sli {
+			dat, err := time.Parse("02-01-2006", dateRaw)
+			if err != nil {
+				fmt.Println("Error parsing date:", err)
+				continue
+			}
+			loc, cou := beautifyLocation(place)
+			dateGig = append(dateGig, dateWithGig{Date: dat, DateStr: dat.Format("Jan. 2, 2006"), Locale: loc, Country: cou})
+		}
+	}
+
+	// Put most recent gigs first
+	for i := 0; i < len(dateGig)-1; i++ {
+		for j := i + 1; j < len(dateGig); j++ {
+			if dateGig[i].Date.Before(dateGig[j].Date) {
+				dateGig[i], dateGig[j] = dateGig[j], dateGig[i]
+			}
+		}
+	}
+
+	return
 }
 
 // getArtisInfo puts all the API info about an artist to a struct
@@ -292,6 +267,31 @@ func artistInformation(artists []artist, rI relIndex) ([]artistInfo, error) {
 		artInfos = append(artInfos, info)
 	}
 	return artInfos, nil
+}
+
+// fillAllCountries places all visited countries' names on slice
+func fillAllCountries(ais []artistInfo) {
+	for _, ai := range ais {
+		for _, g := range ai.Gigs {
+			found := false
+			for _, c := range allCountries {
+				if c == g.Country {
+					found = true
+				}
+			}
+			if !found {
+				allCountries = append(allCountries, g.Country)
+			}
+		}
+	}
+	// Sort slice alphabetically
+	for i := 0; i < len(allCountries)-1; i++ {
+		for j := i + 1; j < len(allCountries); j++ {
+			if allCountries[i] > allCountries[j] {
+				allCountries[i], allCountries[j] = allCountries[j], allCountries[i]
+			}
+		}
+	}
 }
 
 // readAPI gets the data from the given API and stores it into some global variables

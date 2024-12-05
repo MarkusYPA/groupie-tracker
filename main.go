@@ -9,35 +9,33 @@ import (
 	"strings"
 )
 
-// Holds the name of a country and if it's been selected
 type countryInfo struct {
 	Name     string
 	Selected bool
 }
 
 // Filter selections and artist informations for home template
-type HomePageData struct {
+type homePageData struct {
 	Order     string
 	BandCheck bool
 	SoloCheck bool
-	CreMin    string
-	CreMax    string
-	FiAlMin   string
-	FiAlMax   string
-	PeMin     string
-	PeMax     string
+	StartMin  string
+	StartMax  string
+	AlbumMin  string
+	AlbumMax  string
+	ShowMin   string
+	ShowMax   string
 	Countries []countryInfo
 	Artists   []artistInfo
 	MinMax    [6]int
 }
 
-// Info that gets displayed on the artist page
-type ArtisPageData struct {
+type artisPageData struct {
 	Artist artistInfo
 	Gigs   [][2]string
 }
 
-type ErrorPageData struct {
+type errorPageData struct {
 	Error    uint
 	Message1 string
 	Message2 string
@@ -51,26 +49,26 @@ var (
 var tmpl = template.Must(template.ParseGlob("templates/*.html"))
 
 // pageDataValues formats the data to be sent to the home template
-func homePageDataValues(f filter, ais []artistInfo) HomePageData {
+func homePageDataValues(f filter, ais []artistInfo) homePageData {
 
 	cInfos := []countryInfo{}
 	for i, boo := range f.countries {
 		cInfos = append(cInfos, countryInfo{allCountries[i], boo})
 	}
 
-	data := HomePageData{
+	data := homePageData{
 		Order:     f.order,
 		BandCheck: f.band,
 		SoloCheck: f.solo,
-		CreMin:    strconv.Itoa(f.created[0]),
-		CreMax:    strconv.Itoa(f.created[1]),
-		FiAlMin:   strconv.Itoa(f.firstAl[0]),
-		FiAlMax:   strconv.Itoa(f.firstAl[1]),
-		PeMin:     strconv.Itoa(f.recPerf[0]),
-		PeMax:     strconv.Itoa(f.recPerf[1]),
+		StartMin:  strconv.Itoa(f.created[0]),
+		StartMax:  strconv.Itoa(f.created[1]),
+		AlbumMin:  strconv.Itoa(f.firstAl[0]),
+		AlbumMax:  strconv.Itoa(f.firstAl[1]),
+		ShowMin:   strconv.Itoa(f.recShow[0]),
+		ShowMax:   strconv.Itoa(f.recShow[1]),
 		Countries: cInfos,
 		Artists:   ais,
-		MinMax:    minmaxFirst,
+		MinMax:    minmaxLimits,
 	}
 	return data
 }
@@ -121,7 +119,7 @@ func artistHandler(w http.ResponseWriter, r *http.Request) {
 		readAPI(w)
 	}
 
-	var dataAP ArtisPageData
+	var dataAP artisPageData
 	var found1 bool
 	for _, ai := range artInfos {
 		if ai.Id == artistID {
@@ -163,14 +161,12 @@ func artistHandler(w http.ResponseWriter, r *http.Request) {
 // goToErrorPage handles errors by loading an error page to the user
 func goToErrorPage(errorN int, m1 string, m2 string, w http.ResponseWriter) {
 	w.WriteHeader(errorN)
-	epd := ErrorPageData{uint(errorN), m1, m2}
+	epd := errorPageData{uint(errorN), m1, m2}
 	fmt.Printf("%d %s, %s\n", errorN, m1, m2)
 	tmpl.ExecuteTemplate(w, "errorpage.html", epd)
 }
 
 func main() {
-	//http.Handle("/static/", http.FileServer(http.Dir(".")))
-
 	fileServer := http.FileServer(http.Dir("."))
 	http.Handle("/static/css/styles.css", fileServer)
 	http.Handle("/static/css/homepage.css", fileServer)
