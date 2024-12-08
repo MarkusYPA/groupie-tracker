@@ -5,9 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"net/url"
 	"strconv"
-	"strings"
 )
 
 type countryInfo struct {
@@ -111,35 +109,15 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "index.html", data)
 }
 
-func artistNameAndId(name *string, artistID *int, w http.ResponseWriter, r *http.Request) {
-	// Get name and id from url
-	idStart := strings.LastIndex(r.URL.String(), "=") + 1
-	nameStart := strings.Index(r.URL.String(), "=") + 1
-	nameEnd := strings.Index(r.URL.String(), `&`)
-	if idStart < 0 || nameStart < 0 || nameEnd < 0 || nameEnd <= nameStart {
-		goToErrorPage(http.StatusBadRequest, "Bad Request", "Invalid artist URL", w) // Error 400
-		return
-	}
-	id := r.URL.String()[idStart:]
-	nameInURL := r.URL.String()[nameStart:nameEnd]
-	var err error
-	*name, err = url.QueryUnescape(nameInURL)
-	if err != nil {
-		goToErrorPage(http.StatusBadRequest, "Bad Request", "Invalid artist URL", w) // Error 400
-		return
-	}
-	*artistID, err = strconv.Atoi(id)
+// artistHandler serves a site for a specific artist
+func artistHandler(w http.ResponseWriter, r *http.Request) {
+	name := r.URL.Query().Get("name")
+	id := r.URL.Query().Get("id")
+	artistID, err := strconv.Atoi(id)
 	if err != nil {
 		goToErrorPage(http.StatusBadRequest, "Bad Request", "Invalid artist ID: "+err.Error(), w) // Error 400
 		return
 	}
-}
-
-// artistHandler serves a site for a specific artist
-func artistHandler(w http.ResponseWriter, r *http.Request) {
-	var name string
-	var artistID int
-	artistNameAndId(&name, &artistID, w, r)
 
 	if len(artInfos) == 0 { // In case someone navigates to an artist page directly
 		readAPI(w)
@@ -161,7 +139,7 @@ func artistHandler(w http.ResponseWriter, r *http.Request) {
 			dataAP.Artist = ai
 		}
 	}
-	id := strconv.Itoa(artistID)
+
 	if !foundId {
 		goToErrorPage(http.StatusNotFound, "Not Found", "Artist "+id+` doesn't exist`, w) // Error 404
 		return
