@@ -64,14 +64,16 @@ type dateWithGig struct {
 
 // Combination of info from artist and relations with nice dates
 type artistInfo struct {
-	Id         int
-	Name       string
-	Image      string
-	Members    []string
-	StartDate  int
-	FirstAlbum time.Time
-	FAString   string
-	Gigs       []dateWithGig
+	Id              int
+	Name            string
+	Image           string
+	Members         []string
+	StartDate       int
+	FirstAlbum      time.Time
+	FAString        string
+	Gigs            []dateWithGig
+	LocationsUrl    string
+	ConcertDatesUrl string
 }
 
 var (
@@ -158,18 +160,18 @@ func fetchFromAPI(relURL string, dataIn interface{}) (int, string) {
 }
 
 // getGigs retrieves and parses the dates, locations and countries for an artist's concerts
-func getGigs(artist artist) ([][2]string, int, string) {
+func getGigs(artistI artistInfo) ([][2]string, int, string) {
 	gigs := [][2]string{}
 	gigDates := []time.Time{}
 	errorMessage := ""
 
 	var loc locations
-	status, errorMessage := fetchFromAPI(artist.Locations, &loc)
+	status, errorMessage := fetchFromAPI(artistI.LocationsUrl, &loc)
 	if status != http.StatusOK {
 		return gigs, status, errorMessage
 	}
 	var dat dates
-	status, errorMessage = fetchFromAPI(artist.ConcertDates, &dat)
+	status, errorMessage = fetchFromAPI(artistI.ConcertDatesUrl, &dat)
 	if status != http.StatusOK {
 		return gigs, status, errorMessage
 	}
@@ -243,6 +245,7 @@ func getArtisInfo(art artist, index int, ri relIndex) (artistInfo, error) {
 	ai := artistInfo{}
 	ai.Id, ai.Name, ai.Image = art.Id, art.Name, art.Image
 	ai.Members, ai.StartDate = art.Members, art.StartDate
+	ai.LocationsUrl, ai.ConcertDatesUrl = art.Locations, art.ConcertDates
 
 	albumDate, err := time.Parse("02-01-2006", art.FirstAlbum)
 	if err != nil {

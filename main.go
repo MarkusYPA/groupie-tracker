@@ -95,81 +95,51 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if r.Method == http.MethodPost && r.FormValue("reset") != "rd" {
+	if r.Method == http.MethodPost && r.FormValue("reset") != "resetfilter" {
 		flt = newFilter(r)
 	}
 
-	if r.FormValue("reset") == "rd" {
+	if r.FormValue("reset") == "resetfilter" {
 		flt = defaultFilter()
 	}
 
-	toDisplay := filterBy(flt, artInfos)
-	data := homePageDataValues(flt, toDisplay)
+	artistsToDisplay := filterBy(flt, artInfos)
+	data := homePageDataValues(flt, artistsToDisplay)
 
 	tmpl.ExecuteTemplate(w, "index.html", data)
 }
 
 // artistHandler serves a site for a specific artist
 func artistHandler(w http.ResponseWriter, r *http.Request) {
-	name := r.URL.Query().Get("name")
-	id := r.URL.Query().Get("id")
+	id := r.URL.Path[len("/groupie-tracker/artist/"):]
 	artistID, err := strconv.Atoi(id)
 	if err != nil {
-		goToErrorPage(http.StatusBadRequest, "Bad Request", "Invalid artist ID: "+err.Error(), w) // Error 400
+		goToErrorPage(http.StatusBadRequest, "Bad Request", "Invalid artist ID: "+id, w)
 		return
 	}
 
-	if len(artInfos) == 0 { // In case someone navigates to an artist page directly
+	if len(artInfos) == 0 { // When navigating to an artist page directly
 		readAPI(w)
 	}
 
 	var dataAP artisPageData
 	var foundId bool
-	var foundName bool
-	var foundBoth bool
 	for _, ai := range artInfos {
 		if ai.Id == artistID {
 			foundId = true
-		}
-		if ai.Name == name {
-			foundName = true
-		}
-		if ai.Id == artistID && ai.Name == name {
-			foundBoth = true
 			dataAP.Artist = ai
+			break
 		}
 	}
 
 	if !foundId {
-		goToErrorPage(http.StatusNotFound, "Not Found", "Artist "+id+` doesn't exist`, w) // Error 404
-		return
-	}
-	if !foundName {
-		goToErrorPage(http.StatusNotFound, "Not Found", "Artist "+name+` doesn't exist`, w) // Error 404
-		return
-	}
-	if !foundBoth {
-		goToErrorPage(http.StatusBadRequest, "Bad Request", "Name "+name+" and ID "+id+` don't match`, w) // Error 400
-		return
-	}
-
-	var arti artist
-	var found3 bool
-	for _, a := range artists {
-		if a.Id == artistID {
-			arti = a
-			found3 = true
-			break
-		}
-	}
-	if !found3 {
-		goToErrorPage(http.StatusNotFound, "Not Found", "Artist "+id+` doesn't exist`, w) // Error 404
+		goToErrorPage(http.StatusNotFound, "Not Found", "Artist "+id+` doesn't exist`, w)
 		return
 	}
 
 	var status int
-	errorMsg := ""
-	dataAP.Gigs, status, errorMsg = getGigs(arti)
+	var errorMsg string
+	dataAP.Gigs, status, errorMsg = getGigs(dataAP.Artist)
 	if status != http.StatusOK {
 		goToErrorPage(http.StatusBadRequest, errorMsg, "Failed to fetch data from API", w) // Error 400
 		return

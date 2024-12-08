@@ -21,7 +21,7 @@
             <h1>Filter</h1>
             <form method="POST" action="/">
 
-                <button type="submit" name="reset" value="rd">Reset to Defaults</button><br><br>
+                <button type="submit" name="reset" value="resetfilter">Reset to Defaults</button><br><br>
 
                 <label for="order">Sort:</label>
                 <select name="order" id="order">
@@ -132,7 +132,7 @@
                                 {{end}}</p>
                             <p><b>First Album Release:</b><br>
                                 {{.FAString}}</p>
-                            <p><a href="/groupie-tracker/artist/bio?name={{.Name}}&id={{.Id}}">Artist Page</a></p>
+                            <p><a href="/groupie-tracker/artist/{{.Id}}">Artist Page</a></p>
                         </div>
                     </div>
                 </div>
