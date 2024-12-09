@@ -34,8 +34,10 @@
                     <p><b>Concerts:</b>
                     <table class="artistpage-concert-list">
                         {{range .Gigs}}
-                        <tr>                            
-                            <td class="date"><pre style="margin: 0px;">{{index . 0}}</pre></td>
+                        <tr>
+                            <td class="date">
+                                <pre style="margin: 0px;">{{index . 0}}</pre>
+                            </td>
                             <td class="location">{{index . 1}}</td>
                         </tr>
                         {{end}}
@@ -43,7 +45,8 @@
                     </p>
 
                     <br>
-                    <p><a href="/groupie-tracker">Front Page</a></p><br>
+
+                    <p><a href="javascript:history.back()">Go Back</a></p>
                 </div>
 
             </div>

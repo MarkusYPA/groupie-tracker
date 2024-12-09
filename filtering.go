@@ -49,6 +49,7 @@ func getMinMaxLimits() [6]int {
 			}
 		}
 	}
+
 	return [6]int{startMin, startMax, albumMin, albumMax, showMin, showMax}
 }
 

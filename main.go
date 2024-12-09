@@ -40,10 +40,10 @@ type errorPageData struct {
 	Message2 string
 }
 
-var (
+/* var (
 	firstLoad bool = true
 	flt       filter
-)
+) */
 
 var tmpl = template.Must(template.ParseGlob("templates/*.html"))
 
@@ -85,22 +85,16 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if firstLoad {
-		err := readAPI(w)
-		flt = defaultFilter()
-		if err == nil {
-			firstLoad = false
-		} else {
-			fmt.Println(err.Error(), firstLoad)
-			return
-		}
+	err := readAPI(w)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
 	}
 
-	if r.Method == http.MethodPost && r.FormValue("reset") != "resetfilter" {
+	var flt filter
+	if r.Method == http.MethodPost && r.FormValue("reset") != "resetfilter" && minmaxLimits[0] != 0 {
 		flt = newFilter(r)
-	}
-
-	if r.FormValue("reset") == "resetfilter" {
+	} else {
 		flt = defaultFilter()
 	}
 
