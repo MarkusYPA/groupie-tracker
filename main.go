@@ -29,7 +29,7 @@ type homePageData struct {
 	MinMax    [6]int
 }
 
-type artisPageData struct {
+type artistPageData struct {
 	Artist artistInfo
 	Gigs   [][2]string
 }
@@ -75,8 +75,8 @@ func homePageDataValues(f filter, ais []artistInfo) homePageData {
 // handler for the homepage
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" && r.URL.Path != "/groupie-tracker" && r.URL.Path != "/groupie-tracker/about" {
-		goToErrorPage(http.StatusNotFound, "Not Found", `Page doesn't exist`, w) // Error 404
-		fmt.Println("Bad url path:", r.URL.Path)
+		goToErrorPage(http.StatusNotFound, "Not Found", "Page doesn't exist", w) // Error 404
+		fmt.Println("Bad URL path:", r.URL.Path)
 		return
 	}
 
@@ -122,7 +122,7 @@ func artistHandler(w http.ResponseWriter, r *http.Request) {
 		readAPI(w)
 	}
 
-	var dataAP artisPageData
+	var dataAP artistPageData
 	var foundId bool
 	for _, ai := range artInfos {
 		if ai.Id == artistID {
