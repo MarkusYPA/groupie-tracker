@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -145,13 +144,8 @@ func fetchFromAPI(relURL string, dataIn interface{}) (int, string) {
 		return resp.StatusCode, ""
 	}
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return http.StatusInternalServerError, "Internal Server Error"
-	}
-
-	// Parse JSON into Go struct
-	err = json.Unmarshal(body, &dataIn)
+	// Parse JSON directly from the response body into the Go struct
+	err = json.NewDecoder(resp.Body).Decode(&dataIn)
 	if err != nil {
 		return http.StatusInternalServerError, "Internal Server Error"
 	}
@@ -305,7 +299,7 @@ func readAPI(w http.ResponseWriter) error {
 
 	status, errorMessage = fetchFromAPI("https://groupietrackers.herokuapp.com/api", &apiData)
 	if status != http.StatusOK {
-		goToErrorPage(status, errorMessage, "Error parsing API JSON", w)
+		goToErrorPage(status, errorMessage, "Error reading API", w)
 		return fmt.Errorf("error parsing API JSON")
 	}
 
