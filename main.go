@@ -82,6 +82,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.URL.Path == "/groupie-tracker/about" {
 		tmpl.ExecuteTemplate(w, "about.html", nil)
+		return
 	}
 
 	if firstLoad {
@@ -171,7 +172,6 @@ func main() {
 
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/groupie-tracker/artist/", artistHandler)
-	http.HandleFunc("/groupie-tracker/about", homeHandler)
 
 	fmt.Println("Server is running on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
