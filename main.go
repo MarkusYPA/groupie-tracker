@@ -42,7 +42,8 @@ type errorPageData struct {
 
 var tmpl = template.Must(template.ParseGlob("templates/*.html"))
 
-// pageDataValues formats the data to be sent to the home template
+// pageDataValues formats the data to be executed with the home template so filter
+// selections are retained and filtered artists displayed
 func homePageDataValues(f filter, ais []artistInfo) homePageData {
 
 	couSels := []countrySelect{}
@@ -113,16 +114,10 @@ func artistHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var dataAP artistPageData
-	var foundId bool
-	for _, ai := range artInfos {
-		if ai.Id == artistID {
-			foundId = true
-			dataAP.Artist = ai
-			break
-		}
-	}
 
-	if !foundId {
+	if artistID > 0 && artistID <= len(artInfos) {
+		dataAP.Artist = artInfos[artistID-1]
+	} else {
 		goToErrorPage(http.StatusNotFound, "Not Found", "Artist "+id+` doesn't exist`, w)
 		return
 	}

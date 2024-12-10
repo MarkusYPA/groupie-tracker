@@ -19,15 +19,15 @@ type apiResponse struct {
 
 // Raw artist data from API
 type artist struct {
-	Id           int      `json:"id"`
-	Image        string   `json:"image"`
-	Name         string   `json:"name"`
-	Members      []string `json:"members"`
-	StartDate    int      `json:"creationDate"`
-	FirstAlbum   string   `json:"firstAlbum"`
-	Locations    string   `json:"locations"`
-	ConcertDates string   `json:"concertDates"`
-	Relations    string   `json:"relations"`
+	Id              int      `json:"id"`
+	Image           string   `json:"image"`
+	Name            string   `json:"name"`
+	Members         []string `json:"members"`
+	StartDate       int      `json:"creationDate"`
+	FirstAlbum      string   `json:"firstAlbum"`
+	LocationsUrl    string   `json:"locations"`
+	ConcertDatesUrl string   `json:"concertDates"`
+	RelationsUrl    string   `json:"relations"`
 }
 
 // Raw relation data from API
@@ -79,7 +79,7 @@ var (
 	allCountries  []string
 	apiData       apiResponse
 	artInfos      []artistInfo
-	artists       []artist
+	artistsApi    []artist
 	relationIndex relIndex
 )
 
@@ -93,6 +93,7 @@ func beautifyLocation(s string) (string, string) {
 			name += strings.ToUpper(wd)
 			continue
 		}
+
 		for i := 0; i < len(wd); i++ {
 			r := rune(wd[i])
 
@@ -205,8 +206,8 @@ func getGigs(artistI artistInfo) ([][2]string, int, string) {
 // dateAndGig writes parsed dates, formatted dates and nicely spelled countries and locations to a slice of structs
 func dateAndGig(rels map[string][]string) (dateGig []dateWithGig) {
 	// parse time from string and combine with location
-	for place, sli := range rels {
-		for _, dateRaw := range sli {
+	for place, dates := range rels {
+		for _, dateRaw := range dates {
 			dat, err := time.Parse("02-01-2006", dateRaw)
 			if err != nil {
 				fmt.Println("Error parsing date:", err)
@@ -230,11 +231,11 @@ func dateAndGig(rels map[string][]string) (dateGig []dateWithGig) {
 }
 
 // getArtisInfo puts all the API info about an artist to a struct
-func getArtisInfo(art artist, index int, ri relIndex) (artistInfo, error) {
+func getArtisInfo(art *artist, index int, ri *relIndex) (artistInfo, error) {
 	ai := artistInfo{}
 	ai.Id, ai.Name, ai.Image = art.Id, art.Name, art.Image
 	ai.Members, ai.StartDate = art.Members, art.StartDate
-	ai.LocationsUrl, ai.ConcertDatesUrl = art.Locations, art.ConcertDates
+	ai.LocationsUrl, ai.ConcertDatesUrl = art.LocationsUrl, art.ConcertDatesUrl
 
 	albumDate, err := time.Parse("02-01-2006", art.FirstAlbum)
 	if err != nil {
@@ -249,10 +250,10 @@ func getArtisInfo(art artist, index int, ri relIndex) (artistInfo, error) {
 }
 
 // artistInformation combines the API information from artists and relations
-func artistInformation(artists []artist, rI relIndex) ([]artistInfo, error) {
+func artistInformation(artistsApi *[]artist, relationsInd *relIndex) ([]artistInfo, error) {
 	artInfos := []artistInfo{}
-	for i := 0; i < len(artists); i++ {
-		info, err := getArtisInfo(artists[i], i, rI)
+	for i := 0; i < len(*artistsApi); i++ {
+		info, err := getArtisInfo(&(*artistsApi)[i], i, relationsInd)
 		if err != nil {
 			return artInfos, err
 		}
@@ -262,8 +263,8 @@ func artistInformation(artists []artist, rI relIndex) ([]artistInfo, error) {
 }
 
 // fillAllCountries places all visited countries' names on slice
-func fillAllCountries(ais []artistInfo) {
-	for _, ai := range ais {
+func fillAllCountries(ais *[]artistInfo) {
+	for _, ai := range *ais {
 		for _, g := range ai.Gigs {
 			found := false
 			for _, c := range allCountries {
@@ -298,7 +299,7 @@ func readAPI(w http.ResponseWriter) error {
 		return fmt.Errorf("error parsing API JSON")
 	}
 
-	status, errorMessage = fetchFromAPI(apiData.ArtistsUrl, &artists)
+	status, errorMessage = fetchFromAPI(apiData.ArtistsUrl, &artistsApi)
 	if status != http.StatusOK {
 		goToErrorPage(status, errorMessage, "Error reading artist API", w)
 		return fmt.Errorf("error reading artist API")
@@ -306,16 +307,15 @@ func readAPI(w http.ResponseWriter) error {
 
 	status, errorMessage = fetchFromAPI(apiData.RelationUrl, &relationIndex)
 	if status != http.StatusOK {
-		fmt.Println("Status code:", status)
 		goToErrorPage(status, errorMessage, "Error reading relations API", w)
 		return fmt.Errorf("error reading relations API")
 	}
 
-	artInfos, err = artistInformation(artists, relationIndex)
+	artInfos, err = artistInformation(&artistsApi, &relationIndex)
 	if err != nil { // Error parsing date
 		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", err.Error(), w)
 		return fmt.Errorf("internal Server Error")
 	}
-	fillAllCountries(artInfos)
+	fillAllCountries(&artInfos)
 	return nil
 }
