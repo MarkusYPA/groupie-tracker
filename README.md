@@ -51,6 +51,10 @@ Here are some examples of the CSS features we implemented to make the site respo
 * Flex display is used to ensure artist boxes fluidly grows or shrinks to fit the space available.
 * Relative sizing for fonts (rem) and viewport height and width (vh and vw, respectively) are implemented to respond to different screen settings.
 
+### Deployment
+
+The tracker has been deployed at [`https://groupie-tracker-e3mz.onrender.com`](https://groupie-tracker-e3mz.onrender.com)
+
 ## [The Groupies](http://localhost:8080/groupie-tracker/about)
 
 * [Markus Amberla](https://github.com/MarkusYPA/MarkusYPA)
