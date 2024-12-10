@@ -11,10 +11,8 @@ import (
 
 // URLs from the initial API response
 type apiResponse struct {
-	ArtistsUrl   string `json:"artists"`
-	LocationsUrl string `json:"locations"`
-	DatesUrl     string `json:"dates"`
-	RelationUrl  string `json:"relation"`
+	ArtistsUrl  string `json:"artists"`
+	RelationUrl string `json:"relation"`
 }
 
 // Raw artist data from API
@@ -27,7 +25,6 @@ type artist struct {
 	FirstAlbum      string   `json:"firstAlbum"`
 	LocationsUrl    string   `json:"locations"`
 	ConcertDatesUrl string   `json:"concertDates"`
-	RelationsUrl    string   `json:"relations"`
 }
 
 // Raw relation data from API
@@ -56,8 +53,6 @@ type dates struct {
 // Parsed dates, formatted dates, and nicely spelled locations and countries
 type dateWithGig struct {
 	Date    time.Time
-	DateStr string
-	Locale  string
 	Country string
 }
 
@@ -213,8 +208,8 @@ func dateAndGig(rels map[string][]string) (dateGig []dateWithGig) {
 				fmt.Println("Error parsing date:", err)
 				continue
 			}
-			loc, cou := beautifyLocation(place)
-			dateGig = append(dateGig, dateWithGig{Date: dat, DateStr: dat.Format("Jan. 2, 2006"), Locale: loc, Country: cou})
+			_, cou := beautifyLocation(place)
+			dateGig = append(dateGig, dateWithGig{Date: dat, Country: cou})
 		}
 	}
 
