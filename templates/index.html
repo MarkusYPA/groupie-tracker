@@ -27,13 +27,12 @@
                 <select name="order" id="order">
                     <option value="namedown" {{if eq .Order "namedown" }}selected{{end}}>Name A-Z</option>
                     <option value="nameup" {{if eq .Order "nameup" }}selected{{end}}>Name Z-A</option>
-                    <option value="fodown" {{if eq .Order "fodown" }}selected{{end}}>Started, old-new</option>
-                    <option value="foup" {{if eq .Order "foup" }}selected{{end}}>Started, new-old</option>
-                    <option value="fadown" {{if eq .Order "fadown" }}selected{{end}}>First album, old-new</option>
-                    <option value="faup" {{if eq .Order "faup" }}selected{{end}}>First album, new-old</option>
-                    <option value="perdown" {{if eq .Order "perdown" }}selected{{end}}>Latest show, old-new
-                    </option>
-                    <option value="perup" {{if eq .Order "perup" }}selected{{end}}>Latest show, new-old</option>
+                    <option value="startdown" {{if eq .Order "startdown" }}selected{{end}}>Started, old-new</option>
+                    <option value="startup" {{if eq .Order "startup" }}selected{{end}}>Started, new-old</option>
+                    <option value="albumdown" {{if eq .Order "albumdown" }}selected{{end}}>First album, old-new</option>
+                    <option value="albumup" {{if eq .Order "albumup" }}selected{{end}}>First album, new-old</option>
+                    <option value="showdown" {{if eq .Order "showdown" }}selected{{end}}>Latest show, old-new</option>
+                    <option value="showup" {{if eq .Order "showup" }}selected{{end}}>Latest show, new-old</option>
                 </select>
                 <br><br>
 
@@ -49,13 +48,13 @@
                 <div>
                     <div style="display: inline-block">
                         <label>
-                            From: <input type="number" name="fomin" value="{{.StartMin}}" min="{{index .MinMax 0}}"
+                            From: <input type="number" name="startmin" value="{{.StartMin}}" min="{{index .MinMax 0}}"
                                 max="{{index .MinMax 1}}" />
                         </label>
                     </div>
                     <div style="display: inline-block">
                         <label>
-                            &nbsp;&nbsp;To: <input type="number" name="fomax" value="{{.StartMax}}"
+                            &nbsp;&nbsp;To: <input type="number" name="startmax" value="{{.StartMax}}"
                                 min="{{index .MinMax 0}}" max="{{index .MinMax 1}}" />
                         </label>
                     </div>
@@ -65,13 +64,13 @@
                 <div>
                     <div style="display: inline-block">
                         <label>
-                            From: <input type="number" name="famin" value="{{.AlbumMin}}" min="{{index .MinMax 2}}"
+                            From: <input type="number" name="albummin" value="{{.AlbumMin}}" min="{{index .MinMax 2}}"
                                 max="{{index .MinMax 3}}" />
                         </label>
                     </div>
                     <div style="display: inline-block">
                         <label>
-                            &nbsp;&nbsp;To: <input type="number" name="famax" value="{{.AlbumMax}}"
+                            &nbsp;&nbsp;To: <input type="number" name="albummax" value="{{.AlbumMax}}"
                                 min="{{index .MinMax 2}}" max="{{index .MinMax 3}}" />
                         </label>
                     </div>
@@ -81,13 +80,13 @@
                 <div>
                     <div style="display: inline-block">
                         <label>
-                            From: <input type="number" name="pemin" value="{{.ShowMin}}" min="{{index .MinMax 4}}"
+                            From: <input type="number" name="showmin" value="{{.ShowMin}}" min="{{index .MinMax 4}}"
                                 max="{{index .MinMax 5}}" />
                         </label>
                     </div>
                     <div style="display: inline-block">
                         <label>
-                            &nbsp;&nbsp;To: <input type="number" name="pemax" value="{{.ShowMax}}"
+                            &nbsp;&nbsp;To: <input type="number" name="showmax" value="{{.ShowMax}}"
                                 min="{{index .MinMax 4}}" max="{{index .MinMax 5}}" />
                         </label>
                     </div>

@@ -81,18 +81,18 @@ func newFilter(r *http.Request) filter {
 	ord := r.FormValue("order")
 	showBand := r.FormValue("band") == "on"
 	showSolo := r.FormValue("solo") == "on"
-	startMin, _ := strconv.Atoi(r.FormValue("fomin"))
-	startMax, _ := strconv.Atoi(r.FormValue("fomax"))
+	startMin, _ := strconv.Atoi(r.FormValue("startmin"))
+	startMax, _ := strconv.Atoi(r.FormValue("startmax"))
 	if startMax < startMin {
 		startMax = startMin
 	}
-	albumMin, _ := strconv.Atoi(r.FormValue("famin"))
-	albumMax, _ := strconv.Atoi(r.FormValue("famax"))
+	albumMin, _ := strconv.Atoi(r.FormValue("albummin"))
+	albumMax, _ := strconv.Atoi(r.FormValue("albummax"))
 	if albumMax < albumMin {
 		albumMax = albumMin
 	}
-	showMin, _ := strconv.Atoi(r.FormValue("pemin"))
-	showMax, _ := strconv.Atoi(r.FormValue("pemax"))
+	showMin, _ := strconv.Atoi(r.FormValue("showmin"))
+	showMax, _ := strconv.Atoi(r.FormValue("showmax"))
 	if showMax < showMin {
 		showMax = showMin
 	}
@@ -118,19 +118,19 @@ func compare(a1, a2 artistInfo, s string) bool {
 	switch s {
 	case "namedown":
 		return a1.Name <= a2.Name
-	case "fodown":
+	case "startdown":
 		return a1.StartDate <= a2.StartDate
-	case "fadown":
+	case "albumdown":
 		return a1.FirstAlbum.Before(a2.FirstAlbum)
-	case "perdown":
+	case "showdown":
 		return a1.Gigs[0].Date.Before(a2.Gigs[0].Date)
 	case "nameup":
 		return a1.Name > a2.Name
-	case "foup":
+	case "startup":
 		return a1.StartDate > a2.StartDate
-	case "faup":
+	case "albumup":
 		return a1.FirstAlbum.After(a2.FirstAlbum)
-	case "perup":
+	case "showup":
 		return a1.Gigs[0].Date.After(a2.Gigs[0].Date)
 	}
 	return true

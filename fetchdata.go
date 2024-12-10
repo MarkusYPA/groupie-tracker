@@ -132,18 +132,13 @@ func beautifyLocation(s string) (string, string) {
 	return strings.Split(name, ",")[0], strings.Split(name, ",")[1]
 }
 
-// Function to fetch data the four different API endpoints
-func fetchFromAPI(relURL string, dataIn interface{}) (int, string) {
+// Function to fetch data from different API endpoints
+func fetchFromAPI(relURL string, dataReciever interface{}) (int, string) {
 	resp, err := http.Get(relURL)
 	if err != nil {
 		return http.StatusBadGateway, "Bad Gateway"
 	}
 	defer resp.Body.Close()
-
-	// API returned a non-200 status code
-	if resp.StatusCode != http.StatusOK {
-		return resp.StatusCode, ""
-	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -151,12 +146,12 @@ func fetchFromAPI(relURL string, dataIn interface{}) (int, string) {
 	}
 
 	// Parse JSON into Go struct
-	err = json.Unmarshal(body, &dataIn)
+	err = json.Unmarshal(body, &dataReciever)
 	if err != nil {
 		return http.StatusInternalServerError, "Internal Server Error"
 	}
 
-	return http.StatusOK, ""
+	return resp.StatusCode, ""
 }
 
 // getGigs retrieves and parses the dates, locations and countries for an artist's concerts

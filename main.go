@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"log"
 	"net/http"
 	"strconv"
+	"text/template"
 )
 
-type countryInfo struct {
+type countrySelect struct {
 	Name     string
 	Selected bool
 }
@@ -24,7 +24,7 @@ type homePageData struct {
 	AlbumMax  string
 	ShowMin   string
 	ShowMax   string
-	Countries []countryInfo
+	Countries []countrySelect
 	Artists   []artistInfo
 	MinMax    [6]int
 }
@@ -40,19 +40,14 @@ type errorPageData struct {
 	Message2 string
 }
 
-/* var (
-	firstLoad bool = true
-	flt       filter
-) */
-
 var tmpl = template.Must(template.ParseGlob("templates/*.html"))
 
 // pageDataValues formats the data to be sent to the home template
 func homePageDataValues(f filter, ais []artistInfo) homePageData {
 
-	cInfos := []countryInfo{}
+	couSels := []countrySelect{}
 	for i, boo := range f.countries {
-		cInfos = append(cInfos, countryInfo{allCountries[i], boo})
+		couSels = append(couSels, countrySelect{allCountries[i], boo})
 	}
 
 	data := homePageData{
@@ -65,7 +60,7 @@ func homePageDataValues(f filter, ais []artistInfo) homePageData {
 		AlbumMax:  strconv.Itoa(f.firstAl[1]),
 		ShowMin:   strconv.Itoa(f.recShow[0]),
 		ShowMax:   strconv.Itoa(f.recShow[1]),
-		Countries: cInfos,
+		Countries: couSels,
 		Artists:   ais,
 		MinMax:    minmaxLimits,
 	}
