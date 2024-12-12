@@ -40,7 +40,15 @@ type errorPageData struct {
 	Message2 string
 }
 
-var tmpl = template.Must(template.ParseGlob("templates/*.html"))
+var tmpl *template.Template
+
+func init() {
+	var err error
+	tmpl, err = template.ParseGlob("templates/*.html")
+	if err != nil {
+		log.Fatalf("Error parsing templates: %v", err)
+	}
+}
 
 // pageDataValues formats the data to be executed with the home template so filter
 // selections are retained and filtered artists displayed
@@ -70,6 +78,12 @@ func homePageDataValues(f filter, ais []artistInfo) homePageData {
 
 // handler for the homepage
 func homeHandler(w http.ResponseWriter, r *http.Request) {
+	// Allow only GET and POST methods
+	if r.Method != http.MethodGet && r.Method != http.MethodPost {
+		goToErrorPage(http.StatusMethodNotAllowed, "Method Not Allowed", "Only GET and POST methods are allowed", w) // Error 405
+		return
+	}
+
 	if r.URL.Path != "/" && r.URL.Path != "/groupie-tracker" && r.URL.Path != "/groupie-tracker/about" {
 		goToErrorPage(http.StatusNotFound, "Not Found", "Page doesn't exist", w) // Error 404
 		fmt.Println("Bad URL path:", r.URL.Path)
@@ -77,7 +91,12 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.URL.Path == "/groupie-tracker/about" {
-		tmpl.ExecuteTemplate(w, "about.html", nil)
+		err := tmpl.ExecuteTemplate(w, "about.html", nil)
+		if err != nil {
+			log.Printf("Error executing %v", err)
+			goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error executing HTML template", w) // Error 500
+			return
+		}
 		return
 	}
 
@@ -97,11 +116,23 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	artistsToDisplay := filterBy(flt, artInfos)
 	data := homePageDataValues(flt, artistsToDisplay)
 
-	tmpl.ExecuteTemplate(w, "index.html", data)
+	//tmpl.ExecuteTemplate(w, "index.html", data)
+	err = tmpl.ExecuteTemplate(w, "index.html", data)
+	if err != nil {
+		log.Printf("Error executing %v", err)
+		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error executing HTML template", w) // Error 500
+		return
+	}
 }
 
 // artistHandler serves a site for a specific artist
 func artistHandler(w http.ResponseWriter, r *http.Request) {
+	// Allow only GET method
+	if r.Method != http.MethodGet {
+		goToErrorPage(http.StatusMethodNotAllowed, "Method Not Allowed", "Only GET method is allowed", w) // Error 405
+		return
+	}
+
 	id := r.URL.Path[len("/groupie-tracker/artist/"):]
 	artistID, err := strconv.Atoi(id)
 	if err != nil {
@@ -130,7 +161,12 @@ func artistHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl.ExecuteTemplate(w, "artistpage.html", dataAP)
+	err = tmpl.ExecuteTemplate(w, "artistpage.html", dataAP)
+	if err != nil {
+		log.Printf("Error executing %v", err)
+		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error executing HTML template", w) // Error 500
+		return
+	}
 }
 
 // goToErrorPage handles errors by loading an error page to the user
@@ -138,7 +174,13 @@ func goToErrorPage(errorN int, m1 string, m2 string, w http.ResponseWriter) {
 	w.WriteHeader(errorN)
 	epd := errorPageData{uint(errorN), m1, m2}
 	fmt.Printf("%d %s, %s\n", errorN, m1, m2)
-	tmpl.ExecuteTemplate(w, "errorpage.html", epd)
+
+	err := tmpl.ExecuteTemplate(w, "errorpage.html", epd)
+	if err != nil {
+		log.Printf("Error executing template 'errorpage.html': %v", err)
+		fmt.Fprintf(w, "%d %s\n%s", errorN, m1, m2) // Error 500 plaintext
+		return
+	}
 }
 
 func main() {
