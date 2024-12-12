@@ -40,13 +40,30 @@ type errorPageData struct {
 	Message2 string
 }
 
-var tmpl *template.Template
+var (
+	tmplArtist *template.Template
+	tmplIndex  *template.Template
+	tmplError  *template.Template
+	tmplAbout  *template.Template
+)
 
 func init() {
 	var err error
-	tmpl, err = template.ParseGlob("templates/*.html")
+	tmplArtist, err = template.ParseFiles("templates/artistpage.html", "templates/header.html", "templates/footer.html")
 	if err != nil {
-		log.Fatalf("Error parsing templates: %v", err)
+		fmt.Println("Error:", err.Error())
+	}
+	tmplIndex, err = template.ParseFiles("templates/index.html", "templates/header.html", "templates/footer.html")
+	if err != nil {
+		fmt.Println("Error:", err.Error())
+	}
+	tmplError, err = template.ParseFiles("templates/errorpage.html", "templates/header.html", "templates/footer.html")
+	if err != nil {
+		fmt.Println("Error:", err.Error())
+	}
+	tmplAbout, err = template.ParseFiles("templates/about.html", "templates/header.html", "templates/footer.html")
+	if err != nil {
+		fmt.Println("Error:", err.Error())
 	}
 }
 
@@ -91,13 +108,18 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.URL.Path == "/groupie-tracker/about" {
-		err := tmpl.ExecuteTemplate(w, "about.html", nil)
-		if err != nil {
-			log.Printf("Error executing %v", err)
+		if tmplAbout != nil {
+			err := tmplAbout.Execute(w, nil)
+			if err != nil {
+				log.Printf("Error executing %v", err)
+				goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error executing HTML template", w) // Error 500
+				return
+			}
+			return
+		} else {
 			goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error executing HTML template", w) // Error 500
 			return
 		}
-		return
 	}
 
 	err := readAPI(w)
@@ -116,10 +138,14 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	artistsToDisplay := filterBy(flt, artInfos)
 	data := homePageDataValues(flt, artistsToDisplay)
 
-	//tmpl.ExecuteTemplate(w, "index.html", data)
-	err = tmpl.ExecuteTemplate(w, "index.html", data)
-	if err != nil {
-		log.Printf("Error executing %v", err)
+	if tmplIndex != nil {
+		err = tmplIndex.Execute(w, data)
+		if err != nil {
+			log.Printf("Error executing %v", err)
+			goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error executing HTML template", w) // Error 500
+			return
+		}
+	} else {
 		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error executing HTML template", w) // Error 500
 		return
 	}
@@ -161,9 +187,14 @@ func artistHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = tmpl.ExecuteTemplate(w, "artistpage.html", dataAP)
-	if err != nil {
-		log.Printf("Error executing %v", err)
+	if tmplArtist != nil {
+		err = tmplArtist.Execute(w, dataAP)
+		if err != nil {
+			log.Printf("Error executing %v", err)
+			goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error executing HTML template", w) // Error 500
+			return
+		}
+	} else {
 		goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error executing HTML template", w) // Error 500
 		return
 	}
@@ -175,10 +206,15 @@ func goToErrorPage(errorN int, m1 string, m2 string, w http.ResponseWriter) {
 	epd := errorPageData{uint(errorN), m1, m2}
 	fmt.Printf("%d %s, %s\n", errorN, m1, m2)
 
-	err := tmpl.ExecuteTemplate(w, "errorpage.html", epd)
-	if err != nil {
-		log.Printf("Error executing template 'errorpage.html': %v", err)
-		fmt.Fprintf(w, "%d %s\n%s", errorN, m1, m2) // Error 500 plaintext
+	if tmplError != nil {
+		err := tmplError.Execute(w, epd)
+		if err != nil {
+			log.Printf("Error executing template 'errorpage.html': %v", err)
+			fmt.Fprintf(w, "%d %s\n%s", errorN, m1, m2) // Error 500 plaintext
+			return
+		}
+	} else {
+		http.Error(w, strconv.Itoa(errorN)+" "+m1+": "+m2, errorN)
 		return
 	}
 }
