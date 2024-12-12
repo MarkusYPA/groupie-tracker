@@ -54,6 +54,7 @@ type dates struct {
 type dateWithGig struct {
 	Date    time.Time
 	Country string
+	Locale  string
 }
 
 // Combination of info from artist and relations with nice dates
@@ -72,6 +73,7 @@ type artistInfo struct {
 
 var (
 	allCountries  []string
+	allLocales    []string
 	apiData       apiResponse
 	artInfos      []artistInfo
 	artistsApi    []artist
@@ -208,8 +210,8 @@ func dateAndGig(rels map[string][]string) (dateGig []dateWithGig) {
 				fmt.Println("Error parsing date:", err)
 				continue
 			}
-			_, cou := beautifyLocation(place)
-			dateGig = append(dateGig, dateWithGig{Date: dat, Country: cou})
+			loc, cou := beautifyLocation(place)
+			dateGig = append(dateGig, dateWithGig{Date: dat, Country: cou, Locale: loc})
 		}
 	}
 
@@ -261,14 +263,24 @@ func artistInformation(artistsApi *[]artist, relationsInd *relIndex) ([]artistIn
 func fillAllCountries(ais *[]artistInfo) {
 	for _, ai := range *ais {
 		for _, g := range ai.Gigs {
-			found := false
+			foundC := false
 			for _, c := range allCountries {
 				if c == g.Country {
-					found = true
+					foundC = true
 				}
 			}
-			if !found {
+			if !foundC {
 				allCountries = append(allCountries, g.Country)
+			}
+
+			foundL := false
+			for _, l := range allLocales {
+				if l == g.Locale {
+					foundL = true
+				}
+			}
+			if !foundL {
+				allLocales = append(allLocales, g.Locale)
 			}
 		}
 	}
@@ -277,6 +289,15 @@ func fillAllCountries(ais *[]artistInfo) {
 		for j := i + 1; j < len(allCountries); j++ {
 			if allCountries[i] > allCountries[j] {
 				allCountries[i], allCountries[j] = allCountries[j], allCountries[i]
+			}
+		}
+	}
+
+	// Sort locales slice alphabetically
+	for i := 0; i < len(allLocales)-1; i++ {
+		for j := i + 1; j < len(allLocales); j++ {
+			if allLocales[i] > allLocales[j] {
+				allLocales[i], allLocales[j] = allLocales[j], allLocales[i]
 			}
 		}
 	}

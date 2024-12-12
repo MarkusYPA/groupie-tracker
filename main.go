@@ -13,6 +13,11 @@ type countrySelect struct {
 	Selected bool
 }
 
+type localeSelect struct {
+	Name     string
+	Selected bool
+}
+
 // Filter selections and artist informations for home template
 type homePageData struct {
 	Order     string
@@ -25,6 +30,7 @@ type homePageData struct {
 	ShowMin   string
 	ShowMax   string
 	Countries []countrySelect
+	Locales   []localeSelect
 	Artists   []artistInfo
 	MinMax    [6]int
 }
@@ -76,6 +82,11 @@ func homePageDataValues(f filter, ais []artistInfo) homePageData {
 		couSels = append(couSels, countrySelect{allCountries[i], boo})
 	}
 
+	locSels := []localeSelect{}
+	for i, boo := range f.locales {
+		locSels = append(locSels, localeSelect{allLocales[i], boo})
+	}
+
 	data := homePageData{
 		Order:     f.order,
 		BandCheck: f.band,
@@ -87,6 +98,7 @@ func homePageDataValues(f filter, ais []artistInfo) homePageData {
 		ShowMin:   strconv.Itoa(f.recShow[0]),
 		ShowMax:   strconv.Itoa(f.recShow[1]),
 		Countries: couSels,
+		Locales:   locSels,
 		Artists:   ais,
 		MinMax:    minmaxLimits,
 	}
@@ -137,6 +149,8 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 	artistsToDisplay := filterBy(flt, artInfos)
 	data := homePageDataValues(flt, artistsToDisplay)
+
+	//fmt.Println(len(allLocales), "locales found in", len(allCountries), "countries")
 
 	if tmplIndex != nil {
 		err = tmplIndex.Execute(w, data)

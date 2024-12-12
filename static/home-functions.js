@@ -41,3 +41,19 @@ document.getElementById('uncheckAll').addEventListener('click', () => {
         checkbox.checked = false;
     });
 });
+
+/* "checkAllLoc" checks all locales  */
+document.getElementById('checkAllLoc').addEventListener('click', () => {
+    const localeChecks = document.querySelectorAll('.localeCB');
+    localeChecks.forEach(checkbox => {
+        checkbox.checked = true;
+    });
+});
+
+/* "uncheckAllLoc" unchecks all locales  */
+document.getElementById('uncheckAllLoc').addEventListener('click', () => {
+    const localeChecks = document.querySelectorAll('.localeCB');
+    localeChecks.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+});

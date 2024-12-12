@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 )
@@ -14,6 +15,7 @@ type filter struct {
 	band      bool
 	solo      bool
 	countries []bool
+	locales   []bool
 }
 
 var (
@@ -60,6 +62,11 @@ func defaultFilter() filter {
 		countries[i] = true
 	}
 
+	locales := make([]bool, len(allLocales))
+	for i := range allLocales {
+		locales[i] = true
+	}
+
 	ord := "namedown"
 	showBand := true
 	showSolo := true
@@ -73,6 +80,7 @@ func defaultFilter() filter {
 		band:      showBand,
 		solo:      showSolo,
 		countries: countries,
+		locales:   locales,
 	}
 }
 
@@ -97,10 +105,26 @@ func newFilter(r *http.Request) filter {
 		showMax = showMin
 	}
 
+	//var selectedCountries int
+	//var selectedLocales int
+
 	countries := make([]bool, len(allCountries))
 	for i, c := range allCountries {
 		countries[i] = (r.FormValue(c) == "on" || r.Method == http.MethodGet)
+		/* 		if countries[i] {
+			selectedCountries++
+		} */
 	}
+
+	locales := make([]bool, len(allLocales))
+	for i, l := range allLocales {
+		locales[i] = (r.FormValue(l) == "on" || r.Method == http.MethodGet)
+		/* 		if locales[i] {
+			selectedLocales++
+		} */
+	}
+
+	//fmt.Println("locales in new filter:", selectedLocales, "countries", selectedCountries)
 
 	return filter{
 		order:     ord,
@@ -110,6 +134,7 @@ func newFilter(r *http.Request) filter {
 		band:      showBand,
 		solo:      showSolo,
 		countries: countries,
+		locales:   locales,
 	}
 }
 
@@ -174,20 +199,43 @@ func filterBy(fil filter, arInfos []artistInfo) []artistInfo {
 				countryNames = append(countryNames, allCountries[i])
 			}
 		}
-		found := false
+		foundC := false
 		for _, cn := range countryNames {
 			for _, g := range ai.Gigs {
 				if g.Country == cn {
-					found = true
+					foundC = true
 					break // from inner loop
 				}
 			}
-			if found {
+			if foundC {
 				break // from outer loop
 			}
 		}
 
-		if passes && found {
+		localeNames := []string{}
+		for i := 0; i < len(allLocales); i++ {
+			if fil.locales[i] {
+				localeNames = append(localeNames, allLocales[i])
+			}
+		}
+		foundL := false
+		for _, ln := range localeNames {
+			for _, g := range ai.Gigs {
+				if g.Locale == ln {
+					foundL = true
+					break // from inner loop
+				}
+			}
+			if foundL {
+				break // from outer loop
+			}
+		}
+
+		if ai.Name == "Travis Scott" {
+			fmt.Println(passes, foundC, foundL)
+		}
+
+		if passes && foundC && foundL {
 			aisOut = append(aisOut, ai)
 		}
 	}

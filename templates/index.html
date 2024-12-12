@@ -103,6 +103,18 @@
                     {{end}}
                 </div>
                 <br>
+
+                <b>Locales Visited</b><br>
+                <button id="checkAllLoc" name="all">Select All</button>
+                <button id="uncheckAllLoc" name="all">Unselect All</button>
+                <br><br>
+                <div class="country-checkboxes">
+                    {{ range .Locales}}
+                    <label><input type="checkbox" class="localeCB" name="{{.Name}}" {{if .Selected}}checked{{end}}>
+                        {{.Name}}</label>
+                    {{end}}
+                </div>
+                <br>
             </form>
         </div>
 
