@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 )
@@ -105,26 +104,15 @@ func newFilter(r *http.Request) filter {
 		showMax = showMin
 	}
 
-	//var selectedCountries int
-	//var selectedLocales int
-
 	countries := make([]bool, len(allCountries))
 	for i, c := range allCountries {
 		countries[i] = (r.FormValue(c) == "on" || r.Method == http.MethodGet)
-		/* 		if countries[i] {
-			selectedCountries++
-		} */
 	}
 
 	locales := make([]bool, len(allLocales))
 	for i, l := range allLocales {
 		locales[i] = (r.FormValue(l) == "on" || r.Method == http.MethodGet)
-		/* 		if locales[i] {
-			selectedLocales++
-		} */
 	}
-
-	//fmt.Println("locales in new filter:", selectedLocales, "countries", selectedCountries)
 
 	return filter{
 		order:     ord,
@@ -175,6 +163,21 @@ func sortArtists(as *[]artistInfo, ord string) {
 // filterBy returns artistInfos that pass the filter, sorted by the rule in it
 func filterBy(fil filter, arInfos []artistInfo) []artistInfo {
 	aisOut := []artistInfo{}
+
+	selectedCountries := []string{}
+	for i := 0; i < len(allCountries); i++ {
+		if fil.countries[i] {
+			selectedCountries = append(selectedCountries, allCountries[i])
+		}
+	}
+
+	selectedLocales := []string{}
+	for i := 0; i < len(allLocales); i++ {
+		if fil.locales[i] {
+			selectedLocales = append(selectedLocales, allLocales[i])
+		}
+	}
+
 	for _, ai := range arInfos {
 		passes := true
 		if ai.StartDate < fil.created[0] || ai.StartDate > fil.created[1] {
@@ -193,49 +196,33 @@ func filterBy(fil filter, arInfos []artistInfo) []artistInfo {
 			passes = false
 		}
 
-		countryNames := []string{}
-		for i := 0; i < len(allCountries); i++ {
-			if fil.countries[i] {
-				countryNames = append(countryNames, allCountries[i])
-			}
-		}
-		foundC := false
-		for _, cn := range countryNames {
+		foundCountry := false
+		for _, cn := range selectedCountries {
 			for _, g := range ai.Gigs {
 				if g.Country == cn {
-					foundC = true
+					foundCountry = true
 					break // from inner loop
 				}
 			}
-			if foundC {
+			if foundCountry {
 				break // from outer loop
 			}
 		}
 
-		localeNames := []string{}
-		for i := 0; i < len(allLocales); i++ {
-			if fil.locales[i] {
-				localeNames = append(localeNames, allLocales[i])
-			}
-		}
-		foundL := false
-		for _, ln := range localeNames {
+		foundLocale := false
+		for _, ln := range selectedLocales {
 			for _, g := range ai.Gigs {
 				if g.Locale == ln {
-					foundL = true
+					foundLocale = true
 					break // from inner loop
 				}
 			}
-			if foundL {
+			if foundLocale {
 				break // from outer loop
 			}
 		}
 
-		if ai.Name == "Travis Scott" {
-			fmt.Println(passes, foundC, foundL)
-		}
-
-		if passes && foundC && foundL {
+		if passes && foundCountry && foundLocale {
 			aisOut = append(aisOut, ai)
 		}
 	}
