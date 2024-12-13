@@ -13,10 +13,10 @@
     {{ template "header" . }}
 
 
-    <div class="container">
+    <div class="container" data-scrollable="container">
 
         <!-- Sidebar with filter selections -->
-        <div class="sidebar">
+        <div class="sidebar" data-scrollable="sidebar">
 
             <h1>Filter</h1>
             <form method="POST" action="/">
@@ -120,7 +120,7 @@
         </div>
 
         <!-- Main window with artist Info -->
-        <div class="content">
+        <div class="content" data-scrollable="content">
 
             <h1>Artists</h1>
             {{len .Artists}} results
