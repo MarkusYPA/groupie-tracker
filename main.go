@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"text/template"
+	"time"
 )
 
 type countrySelect struct {
@@ -52,6 +53,7 @@ var (
 	tmplIndex  *template.Template
 	tmplError  *template.Template
 	tmplAbout  *template.Template
+	apiRead    time.Time
 )
 
 func init() {
@@ -149,7 +151,12 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	err := readAPI(w)
+	var err error
+	if apiRead.Before(time.Now().Add(-5 * time.Minute)) {
+		fmt.Println("It's been five minutes, reloading API")
+		err = readAPI(w)
+		apiRead = time.Now()
+	}
 	if err != nil {
 		fmt.Println(err.Error())
 		return
@@ -165,11 +172,10 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	artistsToDisplay := filterBy(flt, artInfos)
 	data := homePageDataValues(flt, artistsToDisplay)
 
-	//fmt.Println(len(allLocales), "locales found in", len(allCountries), "countries")
-
 	if tmplIndex != nil {
 		err = tmplIndex.Execute(w, data)
 		if err != nil {
+			fmt.Println("Trying to execute home page")
 			log.Printf("Error executing %v", err)
 			goToErrorPage(http.StatusInternalServerError, "Internal Server Error", "Error executing HTML template", w) // Error 500
 			return
@@ -231,11 +237,14 @@ func artistHandler(w http.ResponseWriter, r *http.Request) {
 
 // goToErrorPage handles errors by loading an error page to the user
 func goToErrorPage(errorN int, m1 string, m2 string, w http.ResponseWriter) {
-	w.WriteHeader(errorN)
-	epd := errorPageData{uint(errorN), m1, m2}
+
 	fmt.Printf("%d %s, %s\n", errorN, m1, m2)
 
 	if tmplError != nil {
+
+		w.WriteHeader(errorN)
+		epd := errorPageData{uint(errorN), m1, m2}
+
 		err := tmplError.Execute(w, epd)
 		if err != nil {
 			log.Printf("Error executing template 'errorpage.html': %v", err)
@@ -249,6 +258,9 @@ func goToErrorPage(errorN int, m1 string, m2 string, w http.ResponseWriter) {
 }
 
 func main() {
+
+	apiRead = time.Now().Add(-6 * time.Minute)
+
 	fileServer := http.FileServer(http.Dir("."))
 	http.Handle("/static/css/styles.css", fileServer)
 	http.Handle("/static/css/homepage.css", fileServer)
