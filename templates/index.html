@@ -36,13 +36,11 @@
                 </select>
                 <br><br>
 
-                <b>Artist Type</b><br>
-                <label>
-                    <input type="checkbox" name="band" {{if .BandCheck}}checked{{end}}> Band
-                </label>
-                <label>
-                    <input type="checkbox" name="solo" {{if .SoloCheck}}checked{{end}}> Solo act
-                </label><br><br>
+                <b>Artist Members</b><br>
+                {{ range .MemNums}}
+                <label><input type="checkbox" class="membernumber" name="{{.Name}}" {{if .Selected}}checked{{end}}>{{.Name}}</label>
+                {{end}}
+                <br><br>
 
                 <b>Year Started</b><br>
                 <div>
