@@ -18,7 +18,7 @@ for (i = 0; i < coll.length; i++) {
 
 /* Make all checkboxes, number inputs and dropdowns submit the form */
 document.addEventListener("DOMContentLoaded", function () {   // Makes the script run only after html content is loaded
-    const inputs = document.querySelectorAll("input[type='checkbox'], input[type='number'], select");
+    const inputs = document.querySelectorAll("input[type='checkbox'], input[type='number'], input[type='range'], select");
     inputs.forEach(input => {
         input.addEventListener("change", function () {
             this.form.submit();
