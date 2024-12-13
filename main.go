@@ -16,6 +16,7 @@ type countrySelect struct {
 type localeSelect struct {
 	Name     string
 	Selected bool
+	Display  string // Show checkbox in filter or don't
 }
 
 // Filter selections and artist informations for home template
@@ -82,9 +83,23 @@ func homePageDataValues(f filter, ais []artistInfo) homePageData {
 		couSels = append(couSels, countrySelect{allCountries[i], boo})
 	}
 
+	selectedCountries := []string{}
+	for i := 0; i < len(allCountries); i++ {
+		if f.countries[i] {
+			selectedCountries = append(selectedCountries, allCountries[i])
+		}
+	}
+
 	locSels := []localeSelect{}
 	for i, boo := range f.locales {
-		locSels = append(locSels, localeSelect{allLocales[i], boo})
+		display := ""
+		// display only locales from selected countries
+		if isLocaleInCountries(allLocales[i], selectedCountries) {
+			display = `style="display: initial`
+		} else {
+			display = `style="display: none`
+		}
+		locSels = append(locSels, localeSelect{allLocales[i], boo, display})
 	}
 
 	data := homePageData{

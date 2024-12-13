@@ -72,12 +72,13 @@ type artistInfo struct {
 }
 
 var (
-	allCountries  []string
-	allLocales    []string
-	apiData       apiResponse
-	artInfos      []artistInfo
-	artistsApi    []artist
-	relationIndex relIndex
+	allCountries          []string
+	allLocales            []string
+	allCountryLocalePairs [][2]string
+	apiData               apiResponse
+	artInfos              []artistInfo
+	artistsApi            []artist
+	relationIndex         relIndex
 )
 
 // beautifyLocation returns the location and country of a concert, written all nicely
@@ -259,7 +260,7 @@ func artistInformation(artistsApi *[]artist, relationsInd *relIndex) ([]artistIn
 	return artInfos, nil
 }
 
-// fillAllCountries places all visited countries' names on slice
+// fillAllCountries places all visited countries' and locales' names and their pairs on slices
 func fillAllCountries(ais *[]artistInfo) {
 	for _, ai := range *ais {
 		for _, g := range ai.Gigs {
@@ -281,6 +282,7 @@ func fillAllCountries(ais *[]artistInfo) {
 			}
 			if !foundL {
 				allLocales = append(allLocales, g.Locale)
+				allCountryLocalePairs = append(allCountryLocalePairs, [2]string{g.Country, g.Locale})
 			}
 		}
 	}

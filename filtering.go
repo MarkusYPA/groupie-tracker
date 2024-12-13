@@ -160,6 +160,18 @@ func sortArtists(as *[]artistInfo, ord string) {
 	}
 }
 
+// isLocaleInCountries tells if a locale exists in one of the countries on the given list
+func isLocaleInCountries(locale string, selCountries []string) bool {
+	for _, cou := range selCountries {
+		for _, pair := range allCountryLocalePairs {
+			if pair[0] == cou && pair[1] == locale {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 // filterBy returns artistInfos that pass the filter, sorted by the rule in it
 func filterBy(fil filter, arInfos []artistInfo) []artistInfo {
 	aisOut := []artistInfo{}
