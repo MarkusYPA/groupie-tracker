@@ -110,7 +110,8 @@
                 <br><br>
                 <div class="country-checkboxes">
                     {{ range .Locales}}
-                    <label {{.Display}};"><input type="checkbox" class="localeCB" name="{{.Name}}" {{if .Selected}}checked{{end}}>
+                    <label {{.Display}};"><input type="checkbox" class="localeCB" name="{{.Name}}" {{if
+                            .Selected}}checked{{end}}>
                         {{.Name}}</label>
                     {{end}}
                 </div>
