@@ -69,6 +69,25 @@ function restoreScrollPositions() {
     });
 }
 
+/* Check all locales when a country is clicked  */
+document.addEventListener("DOMContentLoaded", function () {   // Run only after html content is loaded
+    const countryCBs = document.querySelectorAll('.countryCB');
+    countryCBs.forEach(checkbox => {
+        checkbox.addEventListener('click', () => {
+            const localeChecks = document.querySelectorAll('.localeCB');
+            localeChecks.forEach(checkbox => {
+                checkbox.checked = true;
+            });
+        });
+    });
+    document.getElementById('checkAll').addEventListener('click', () => {
+        const localeChecks = document.querySelectorAll('.localeCB');
+        localeChecks.forEach(checkbox => {
+            checkbox.checked = true;
+        });
+    });
+});
+
 // Function to save scroll positions for all scrollable areas
 function saveScrollPositions() {
     document.querySelectorAll("[data-scrollable]").forEach((element) => {
