@@ -30,6 +30,25 @@ Bonus:
 
 
 removed html:
+
+
+                <!-- <b>Most recent performance</b><br>
+                <div>
+                    <div style="display: inline-block">
+                        <label>
+                            From: <input type="number" name="showmin" value="{{.ShowMin}}" min="{{index .MinMax 4}}"
+                                max="{{index .MinMax 5}}" />
+                        </label>
+                    </div>
+                    <div style="display: inline-block">
+                        <label>
+                            &nbsp;&nbsp;To: <input type="number" name="showmax" value="{{.ShowMax}}"
+                                min="{{index .MinMax 4}}" max="{{index .MinMax 5}}" />
+                        </label>
+                    </div>
+                </div><br> -->
+
+
                 <b>Artist Type</b><br>
                 <label>
                     <input type="checkbox" name="band" {{if .BandCheck}}checked{{end}}> Band

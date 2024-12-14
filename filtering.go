@@ -7,12 +7,10 @@ import (
 
 // Contains user selections
 type filter struct {
-	order   string
-	created [2]int
-	firstAl [2]int
-	recShow [2]int
-	//band           bool
-	//solo           bool
+	order          string
+	created        [2]int
+	firstAl        [2]int
+	recShow        int
 	numbsOfMembers []bool
 	countries      []bool
 	locales        []bool
@@ -73,8 +71,6 @@ func defaultFilter() filter {
 	}
 
 	ord := "namedown"
-	//showBand := true
-	//showSolo := true
 	numbsOfMembers := memNumbs
 	minmaxLimits = getMinMaxLimits()
 
@@ -82,9 +78,8 @@ func defaultFilter() filter {
 		order:   ord,
 		created: [2]int{minmaxLimits[0], minmaxLimits[1]},
 		firstAl: [2]int{minmaxLimits[2], minmaxLimits[3]},
-		recShow: [2]int{minmaxLimits[4], minmaxLimits[5]},
-		//band:           showBand,
-		//solo:           showSolo,
+		//recShow:        [2]int{minmaxLimits[4], minmaxLimits[5]},
+		recShow:        minmaxLimits[5],
 		numbsOfMembers: numbsOfMembers,
 		countries:      countries,
 		locales:        locales,
@@ -94,8 +89,6 @@ func defaultFilter() filter {
 // newFilter places the user's selections to a filter
 func newFilter(r *http.Request) filter {
 	ord := r.FormValue("order")
-	//showBand := r.FormValue("band") == "on"
-	//showSolo := r.FormValue("solo") == "on"
 	startMin, _ := strconv.Atoi(r.FormValue("startmin"))
 	startMax, _ := strconv.Atoi(r.FormValue("startmax"))
 	if startMax < startMin {
@@ -106,11 +99,11 @@ func newFilter(r *http.Request) filter {
 	if albumMax < albumMin {
 		albumMax = albumMin
 	}
-	showMin, _ := strconv.Atoi(r.FormValue("showmin"))
+	//showMin, _ := strconv.Atoi(r.FormValue("showmin"))
 	showMax, _ := strconv.Atoi(r.FormValue("showmax"))
-	if showMax < showMin {
+	/* if showMax < showMin {
 		showMax = showMin
-	}
+	} */
 
 	selectedCountries := []string{}
 	countries := make([]bool, len(allCountries))
@@ -132,7 +125,6 @@ func newFilter(r *http.Request) filter {
 	// Get values from form about what member numbers are selected
 	memNumbs := make([]bool, len(allMemberNumbers))
 	for i := range allMemberNumbers {
-		//memNumbs[i] = true
 		memNumbs[i] = (r.FormValue(strconv.Itoa(i+1)) == "on" || r.Method == http.MethodGet) // Name checkboxes just numbers?
 	}
 
@@ -140,9 +132,8 @@ func newFilter(r *http.Request) filter {
 		order:   ord,
 		created: [2]int{startMin, startMax},
 		firstAl: [2]int{albumMin, albumMax},
-		recShow: [2]int{showMin, showMax},
-		//band:           showBand,
-		//solo:           showSolo,
+		//recShow:        [2]int{showMin, showMax},
+		recShow:        showMax,
 		numbsOfMembers: memNumbs,
 		countries:      countries,
 		locales:        locales,
@@ -227,16 +218,10 @@ func filterBy(fil filter, arInfos []artistInfo) []artistInfo {
 		if ai.FirstAlbum.Year() < fil.firstAl[0] || ai.FirstAlbum.Year() > fil.firstAl[1] {
 			continue
 		}
-		if ai.Gigs[0].Date.Year() < fil.recShow[0] || ai.Gigs[0].Date.Year() > fil.recShow[1] {
+		//if ai.Gigs[0].Date.Year() < fil.recShow[0] || ai.Gigs[0].Date.Year() > fil.recShow[1] {
+		if ai.Gigs[0].Date.Year() > fil.recShow {
 			continue
 		}
-
-		/* 		if !fil.band && len(ai.Members) > 1 {
-		   			continue
-		   		}
-		   		if !fil.solo && len(ai.Members) == 1 {
-		   			continue
-		   		} */
 
 		foundCountry := false
 		for _, cn := range selectedCountries {

@@ -43,12 +43,29 @@ button {
     font-size: clamp(10.1px, 1.68vw + 5.05px, 16px);
 }
 
+/* Slider */
+datalist {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    writing-mode: vertical-lr;
+    width: 200px;
+}
+
+option {
+    padding: 0;
+}
+
+input[type="range"] {
+    width: 200px;
+    margin: 0;
+}
+
 /* Main Window */
 
 .content {
     flex: 1;
     width: 70%;
-    /* padding: 2rem 2rem 4rem 2rem; */
     padding: 2rem clamp(20.2px, 3.37vw + 10.11px, 32px) 4rem clamp(20.2px, 3.37vw + 10.11px, 32px);
     overflow-y: auto;
     font-size: clamp(10.1px, 1.68vw + 5.05px, 16px);
@@ -68,7 +85,6 @@ button {
     flex-direction: column;
     overflow: hidden;
     max-width: 240px;
-    /* margin: 10px 30px; */
     margin: 10px clamp(18.9px, 3.16vw + 9.47px, 30px);
     border-radius: 10px;
     box-shadow: 6px 8px 10px var(--light-shadow);
@@ -86,9 +102,6 @@ button {
     display: inline-block;
     vertical-align: middle;
     align-self: flex-start;
-    /* picture files are 240 by 240 */
-    /* width: 240px; */
-    /* width: clamp(151.6px, 25.26vw + 75.79px, 240px); */
     width: 100%;
     height: auto;
     transition: 0.2s ease-out;
@@ -134,22 +147,4 @@ button {
     padding: 25px;
     background-color: var(--light2);
     border-radius: 0px 0px 10px 10px;
-}
-
-/* Test Slider */
-datalist {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    writing-mode: vertical-lr;
-    width: 200px;
-}
-
-option {
-    padding: 0;
-}
-
-input[type="range"] {
-    width: 200px;
-    margin: 0;
 }

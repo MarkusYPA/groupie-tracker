@@ -287,7 +287,7 @@ func fillAllCountries(ais *[]artistInfo) {
 			}
 		}
 	}
-	// Sort slice alphabetically
+	// Sort countries slice alphabetically
 	for i := 0; i < len(allCountries)-1; i++ {
 		for j := i + 1; j < len(allCountries); j++ {
 			if allCountries[i] > allCountries[j] {

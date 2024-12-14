@@ -27,20 +27,19 @@ type memNumSelect struct {
 
 // Filter selections and artist informations for home template
 type homePageData struct {
-	Order string
-	//BandCheck bool
-	//SoloCheck bool
-	StartMin  string
-	StartMax  string
-	AlbumMin  string
-	AlbumMax  string
-	ShowMin   string
-	ShowMax   string
-	Countries []countrySelect
-	Locales   []localeSelect
-	MemNums   []memNumSelect
-	Artists   []artistInfo
-	MinMax    [6]int
+	Order    string
+	StartMin string
+	StartMax string
+	AlbumMin string
+	AlbumMax string
+	//ShowMin         string
+	ShowMax         string
+	ShowYearMarkers []int
+	Countries       []countrySelect
+	Locales         []localeSelect
+	MemNums         []memNumSelect
+	Artists         []artistInfo
+	MinMax          [6]int
 }
 
 type artistPageData struct {
@@ -103,7 +102,6 @@ func homePageDataValues(f filter, ais []artistInfo) homePageData {
 	for i, boo := range f.numbsOfMembers {
 		memNumSels = append(memNumSels, memNumSelect{strconv.Itoa(allMemberNumbers[i]), boo})
 	}
-	//fmt.Println(memNumSels)
 
 	locSels := []localeSelect{}
 	for i, boo := range f.locales {
@@ -117,21 +115,29 @@ func homePageDataValues(f filter, ais []artistInfo) homePageData {
 		locSels = append(locSels, localeSelect{allLocales[i], boo, display})
 	}
 
+	// Create markers for the slider, rounded to divisible by 10
+	firstMark := minmaxLimits[4] + (10-(minmaxLimits[4]%10))%10 // round up
+	marks := []int{}
+	for i := firstMark; i <= minmaxLimits[5]; i += 10 {
+		marks = append(marks, i)
+	}
+
 	data := homePageData{
-		Order: f.order,
-		//BandCheck: f.band,
-		//SoloCheck: f.solo,
-		StartMin:  strconv.Itoa(f.created[0]),
-		StartMax:  strconv.Itoa(f.created[1]),
-		AlbumMin:  strconv.Itoa(f.firstAl[0]),
-		AlbumMax:  strconv.Itoa(f.firstAl[1]),
-		ShowMin:   strconv.Itoa(f.recShow[0]),
-		ShowMax:   strconv.Itoa(f.recShow[1]),
-		Countries: couSels,
-		Locales:   locSels,
-		MemNums:   memNumSels,
-		Artists:   ais,
-		MinMax:    minmaxLimits,
+		Order:    f.order,
+		StartMin: strconv.Itoa(f.created[0]),
+		StartMax: strconv.Itoa(f.created[1]),
+		AlbumMin: strconv.Itoa(f.firstAl[0]),
+		AlbumMax: strconv.Itoa(f.firstAl[1]),
+		/* 		ShowMin:         strconv.Itoa(f.recShow[0]),
+		   		ShowMax:         strconv.Itoa(f.recShow[1]), */
+		//ShowMin:         strconv.Itoa(minmaxLimits[4]),
+		ShowMax:         strconv.Itoa(f.recShow),
+		ShowYearMarkers: marks,
+		Countries:       couSels,
+		Locales:         locSels,
+		MemNums:         memNumSels,
+		Artists:         ais,
+		MinMax:          minmaxLimits,
 	}
 	return data
 }
