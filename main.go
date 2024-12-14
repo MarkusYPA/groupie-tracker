@@ -49,11 +49,11 @@ type errorPageData struct {
 }
 
 var (
-	tmplArtist *template.Template
-	tmplIndex  *template.Template
-	tmplError  *template.Template
-	tmplAbout  *template.Template
-	apiRead    time.Time
+	tmplArtist  *template.Template
+	tmplIndex   *template.Template
+	tmplError   *template.Template
+	tmplAbout   *template.Template
+	apiReadTime time.Time
 )
 
 func init() {
@@ -152,10 +152,10 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var err error
-	if apiRead.Before(time.Now().Add(-5 * time.Minute)) {
+	if apiReadTime.Before(time.Now().Add(-5 * time.Minute)) {
 		fmt.Println("It's been five minutes, reloading API")
 		err = readAPI(w)
-		apiRead = time.Now()
+
 	}
 	if err != nil {
 		fmt.Println(err.Error())
@@ -259,7 +259,7 @@ func goToErrorPage(errorN int, m1 string, m2 string, w http.ResponseWriter) {
 
 func main() {
 
-	apiRead = time.Now().Add(-6 * time.Minute)
+	apiReadTime = time.Now().Add(-6 * time.Minute)
 
 	fileServer := http.FileServer(http.Dir("."))
 	http.Handle("/static/css/styles.css", fileServer)
