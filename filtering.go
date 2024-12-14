@@ -75,10 +75,9 @@ func defaultFilter() filter {
 	minmaxLimits = getMinMaxLimits()
 
 	return filter{
-		order:   ord,
-		created: [2]int{minmaxLimits[0], minmaxLimits[1]},
-		firstAl: [2]int{minmaxLimits[2], minmaxLimits[3]},
-		//recShow:        [2]int{minmaxLimits[4], minmaxLimits[5]},
+		order:          ord,
+		created:        [2]int{minmaxLimits[0], minmaxLimits[1]},
+		firstAl:        [2]int{minmaxLimits[2], minmaxLimits[3]},
 		recShow:        minmaxLimits[5],
 		numbsOfMembers: numbsOfMembers,
 		countries:      countries,
@@ -99,11 +98,7 @@ func newFilter(r *http.Request) filter {
 	if albumMax < albumMin {
 		albumMax = albumMin
 	}
-	//showMin, _ := strconv.Atoi(r.FormValue("showmin"))
 	showMax, _ := strconv.Atoi(r.FormValue("showmax"))
-	/* if showMax < showMin {
-		showMax = showMin
-	} */
 
 	selectedCountries := []string{}
 	countries := make([]bool, len(allCountries))
@@ -129,10 +124,9 @@ func newFilter(r *http.Request) filter {
 	}
 
 	return filter{
-		order:   ord,
-		created: [2]int{startMin, startMax},
-		firstAl: [2]int{albumMin, albumMax},
-		//recShow:        [2]int{showMin, showMax},
+		order:          ord,
+		created:        [2]int{startMin, startMax},
+		firstAl:        [2]int{albumMin, albumMax},
 		recShow:        showMax,
 		numbsOfMembers: memNumbs,
 		countries:      countries,
@@ -218,7 +212,6 @@ func filterBy(fil filter, arInfos []artistInfo) []artistInfo {
 		if ai.FirstAlbum.Year() < fil.firstAl[0] || ai.FirstAlbum.Year() > fil.firstAl[1] {
 			continue
 		}
-		//if ai.Gigs[0].Date.Year() < fil.recShow[0] || ai.Gigs[0].Date.Year() > fil.recShow[1] {
 		if ai.Gigs[0].Date.Year() > fil.recShow {
 			continue
 		}

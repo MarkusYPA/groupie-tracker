@@ -27,12 +27,11 @@ type memNumSelect struct {
 
 // Filter selections and artist informations for home template
 type homePageData struct {
-	Order    string
-	StartMin string
-	StartMax string
-	AlbumMin string
-	AlbumMax string
-	//ShowMin         string
+	Order           string
+	StartMin        string
+	StartMax        string
+	AlbumMin        string
+	AlbumMax        string
 	ShowMax         string
 	ShowYearMarkers []int
 	Countries       []countrySelect
@@ -123,14 +122,11 @@ func homePageDataValues(f filter, ais []artistInfo) homePageData {
 	}
 
 	data := homePageData{
-		Order:    f.order,
-		StartMin: strconv.Itoa(f.created[0]),
-		StartMax: strconv.Itoa(f.created[1]),
-		AlbumMin: strconv.Itoa(f.firstAl[0]),
-		AlbumMax: strconv.Itoa(f.firstAl[1]),
-		/* 		ShowMin:         strconv.Itoa(f.recShow[0]),
-		   		ShowMax:         strconv.Itoa(f.recShow[1]), */
-		//ShowMin:         strconv.Itoa(minmaxLimits[4]),
+		Order:           f.order,
+		StartMin:        strconv.Itoa(f.created[0]),
+		StartMax:        strconv.Itoa(f.created[1]),
+		AlbumMin:        strconv.Itoa(f.firstAl[0]),
+		AlbumMax:        strconv.Itoa(f.firstAl[1]),
 		ShowMax:         strconv.Itoa(f.recShow),
 		ShowYearMarkers: marks,
 		Countries:       couSels,
