@@ -75,6 +75,7 @@ var (
 	allCountries          []string
 	allLocales            []string
 	allCountryLocalePairs [][2]string
+	allMemberNumbers      []int
 	apiData               apiResponse
 	artInfos              []artistInfo
 	artistsApi            []artist
@@ -305,6 +306,30 @@ func fillAllCountries(ais *[]artistInfo) {
 	}
 }
 
+// getNumbersOfMembers finds all values for the numbers of members of the artists
+func getNumbersOfMembers() {
+	for _, ai := range artInfos {
+		mems := len(ai.Members)
+
+		found := false
+		for _, num := range allMemberNumbers {
+			if mems == num {
+				found = true
+			}
+		}
+		if !found {
+			allMemberNumbers = append(allMemberNumbers, mems)
+		}
+	}
+	for i := 0; i < len(allMemberNumbers)-1; i++ {
+		for j := i + 1; j < len(allMemberNumbers); j++ {
+			if allMemberNumbers[i] > allMemberNumbers[j] {
+				allMemberNumbers[i], allMemberNumbers[j] = allMemberNumbers[j], allMemberNumbers[i]
+			}
+		}
+	}
+}
+
 // readAPI gets the data from the given API and stores it into some global variables
 func readAPI(w http.ResponseWriter) error {
 	var status int
@@ -335,5 +360,6 @@ func readAPI(w http.ResponseWriter) error {
 		return fmt.Errorf("internal Server Error")
 	}
 	fillAllCountries(&artInfos)
+	getNumbersOfMembers()
 	return nil
 }

@@ -36,13 +36,12 @@
                 </select>
                 <br><br>
 
-                <b>Artist Type</b><br>
-                <label>
-                    <input type="checkbox" name="band" {{if .BandCheck}}checked{{end}}> Band
-                </label>
-                <label>
-                    <input type="checkbox" name="solo" {{if .SoloCheck}}checked{{end}}> Solo act
-                </label><br><br>
+                <b>Artist Members</b><br>
+                {{ range .MemNums}}
+                <label><input type="checkbox" class="membernumber" name="{{.Name}}" {{if
+                        .Selected}}checked{{end}}>{{.Name}}</label>
+                {{end}}
+                <br><br>
 
                 <b>Year Started</b><br>
                 <div>
@@ -76,7 +75,7 @@
                     </div>
                 </div><br>
 
-                <b>Most recent performance</b><br>
+                <!-- <b>Most recent performance</b><br>
                 <div>
                     <div style="display: inline-block">
                         <label>
@@ -90,32 +89,51 @@
                                 min="{{index .MinMax 4}}" max="{{index .MinMax 5}}" />
                         </label>
                     </div>
-                </div><br>
+                </div><br> -->
 
-                <b>Countries Visited</b><br>
-                <button id="checkAll" name="all">Select All</button>
-                <button id="uncheckAll" name="all">Unselect All</button>
-                <br><br>
-                <div class="country-checkboxes">
-                    {{ range .Countries}}
-                    <label><input type="checkbox" class="countryCB" name="{{.Name}}" {{if .Selected}}checked{{end}}>
-                        {{.Name}}</label>
-                    {{end}}
-                </div>
-                <br>
+                <!-- Test Slider -->
+                <label for="showSlider">Most recent shows:</label><br />
+                Year <output id="showmax_output">{{.ShowMax}}</output><br>
+                <input type="range" id="showmax_input" name="showmax" min="{{index .MinMax 4}}" max="{{index .MinMax 5}}" step="1"
+                    value="{{.ShowMax}}" list="markers"
+                    oninput="document.getElementById('showmax_output').value = this.value" />
 
-                <b>Locales Visited</b><br>
-                <button id="checkAllLoc" name="all">Select All</button>
-                <button id="uncheckAllLoc" name="all">Unselect All</button>
+                <datalist id="markers">
+                    <option value="1970" label="1970"></option>
+                    <option value="1980" label="1980"></option>
+                    <option value="1990" label="1990"></option>
+                    <option value="2000" label="2000"></option>
+                    <option value="2010" label="2010"></option>
+                    <option value="2020" label="2020"></option>
+                </datalist>
+
                 <br><br>
-                <div class="country-checkboxes">
-                    {{ range .Locales}}
-                    <label {{.Display}};"><input type="checkbox" class="localeCB" name="{{.Name}}" {{if
-                            .Selected}}checked{{end}}>
-                        {{.Name}}</label>
-                    {{end}}
-                </div>
-                <br>
+<!-- End TEST -->
+
+                    <b>Countries Visited</b><br>
+                    <button id="checkAll" name="all">Select All</button>
+                    <button id="uncheckAll" name="all">Unselect All</button>
+                    <br><br>
+                    <div class="country-checkboxes">
+                        {{ range .Countries}}
+                        <label><input type="checkbox" class="countryCB" name="{{.Name}}" {{if .Selected}}checked{{end}}>
+                            {{.Name}}</label>
+                        {{end}}
+                    </div>
+                    <br>
+
+                    <b>Locales Visited</b><br>
+                    <button id="checkAllLoc" name="all">Select All</button>
+                    <button id="uncheckAllLoc" name="all">Unselect All</button>
+                    <br><br>
+                    <div class="country-checkboxes">
+                        {{ range .Locales}}
+                        <label {{.Display}};"><input type="checkbox" class="localeCB" name="{{.Name}}" {{if
+                                .Selected}}checked{{end}}>
+                            {{.Name}}</label>
+                        {{end}}
+                    </div>
+                    <br>
             </form>
         </div>
 

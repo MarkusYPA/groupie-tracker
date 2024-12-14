@@ -20,11 +20,16 @@ type localeSelect struct {
 	Display  string // Show checkbox in filter or don't
 }
 
+type memNumSelect struct {
+	Name     string
+	Selected bool
+}
+
 // Filter selections and artist informations for home template
 type homePageData struct {
-	Order     string
-	BandCheck bool
-	SoloCheck bool
+	Order string
+	//BandCheck bool
+	//SoloCheck bool
 	StartMin  string
 	StartMax  string
 	AlbumMin  string
@@ -33,6 +38,7 @@ type homePageData struct {
 	ShowMax   string
 	Countries []countrySelect
 	Locales   []localeSelect
+	MemNums   []memNumSelect
 	Artists   []artistInfo
 	MinMax    [6]int
 }
@@ -92,6 +98,13 @@ func homePageDataValues(f filter, ais []artistInfo) homePageData {
 		}
 	}
 
+	// numbers of members to display
+	memNumSels := []memNumSelect{}
+	for i, boo := range f.numbsOfMembers {
+		memNumSels = append(memNumSels, memNumSelect{strconv.Itoa(allMemberNumbers[i]), boo})
+	}
+	//fmt.Println(memNumSels)
+
 	locSels := []localeSelect{}
 	for i, boo := range f.locales {
 		display := ""
@@ -105,9 +118,9 @@ func homePageDataValues(f filter, ais []artistInfo) homePageData {
 	}
 
 	data := homePageData{
-		Order:     f.order,
-		BandCheck: f.band,
-		SoloCheck: f.solo,
+		Order: f.order,
+		//BandCheck: f.band,
+		//SoloCheck: f.solo,
 		StartMin:  strconv.Itoa(f.created[0]),
 		StartMax:  strconv.Itoa(f.created[1]),
 		AlbumMin:  strconv.Itoa(f.firstAl[0]),
@@ -116,6 +129,7 @@ func homePageDataValues(f filter, ais []artistInfo) homePageData {
 		ShowMax:   strconv.Itoa(f.recShow[1]),
 		Countries: couSels,
 		Locales:   locSels,
+		MemNums:   memNumSels,
 		Artists:   ais,
 		MinMax:    minmaxLimits,
 	}
@@ -153,9 +167,9 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 	if apiReadTime.Before(time.Now().Add(-5 * time.Minute)) {
-		fmt.Println("It's been five minutes, reloading API")
+		fmt.Println("Loading API")
 		err = readAPI(w)
-
+		apiReadTime = time.Now()
 	}
 	if err != nil {
 		fmt.Println(err.Error())

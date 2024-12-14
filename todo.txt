@@ -27,3 +27,13 @@ Bonus:
     x No unnecessary data requests
     - Testfile? Could be difficult but it is recommended.
 
+
+
+removed html:
+                <b>Artist Type</b><br>
+                <label>
+                    <input type="checkbox" name="band" {{if .BandCheck}}checked{{end}}> Band
+                </label>
+                <label>
+                    <input type="checkbox" name="solo" {{if .SoloCheck}}checked{{end}}> Solo act
+                </label><br><br>

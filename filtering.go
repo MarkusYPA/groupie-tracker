@@ -7,14 +7,15 @@ import (
 
 // Contains user selections
 type filter struct {
-	order     string
-	created   [2]int
-	firstAl   [2]int
-	recShow   [2]int
-	band      bool
-	solo      bool
-	countries []bool
-	locales   []bool
+	order   string
+	created [2]int
+	firstAl [2]int
+	recShow [2]int
+	//band           bool
+	//solo           bool
+	numbsOfMembers []bool
+	countries      []bool
+	locales        []bool
 }
 
 var (
@@ -23,7 +24,7 @@ var (
 
 // getMinMaxLimits retrieves the minimun and maximum values for three ranges in the filter
 func getMinMaxLimits() [6]int {
-	startMin, startMax, albumMin, albumMax, showMin, showMax := 1950, 2024, 1950, 2024, 1950, 2024
+	startMin, startMax, albumMin, albumMax, showMin, showMax := 1900, 2050, 1900, 2050, 1900, 2050
 	if len(artInfos) > 0 {
 		startMin, startMax, albumMin, albumMax = artInfos[0].StartDate, artInfos[0].StartDate, artInfos[0].FirstAlbum.Year(), artInfos[0].FirstAlbum.Year()
 		showMin, showMax = artInfos[0].Gigs[0].Date.Year(), artInfos[0].Gigs[0].Date.Year()
@@ -66,28 +67,35 @@ func defaultFilter() filter {
 		locales[i] = true
 	}
 
+	memNumbs := make([]bool, len(allMemberNumbers))
+	for i := range allMemberNumbers {
+		memNumbs[i] = true
+	}
+
 	ord := "namedown"
-	showBand := true
-	showSolo := true
+	//showBand := true
+	//showSolo := true
+	numbsOfMembers := memNumbs
 	minmaxLimits = getMinMaxLimits()
 
 	return filter{
-		order:     ord,
-		created:   [2]int{minmaxLimits[0], minmaxLimits[1]},
-		firstAl:   [2]int{minmaxLimits[2], minmaxLimits[3]},
-		recShow:   [2]int{minmaxLimits[4], minmaxLimits[5]},
-		band:      showBand,
-		solo:      showSolo,
-		countries: countries,
-		locales:   locales,
+		order:   ord,
+		created: [2]int{minmaxLimits[0], minmaxLimits[1]},
+		firstAl: [2]int{minmaxLimits[2], minmaxLimits[3]},
+		recShow: [2]int{minmaxLimits[4], minmaxLimits[5]},
+		//band:           showBand,
+		//solo:           showSolo,
+		numbsOfMembers: numbsOfMembers,
+		countries:      countries,
+		locales:        locales,
 	}
 }
 
 // newFilter places the user's selections to a filter
 func newFilter(r *http.Request) filter {
 	ord := r.FormValue("order")
-	showBand := r.FormValue("band") == "on"
-	showSolo := r.FormValue("solo") == "on"
+	//showBand := r.FormValue("band") == "on"
+	//showSolo := r.FormValue("solo") == "on"
 	startMin, _ := strconv.Atoi(r.FormValue("startmin"))
 	startMax, _ := strconv.Atoi(r.FormValue("startmax"))
 	if startMax < startMin {
@@ -104,25 +112,40 @@ func newFilter(r *http.Request) filter {
 		showMax = showMin
 	}
 
+	selectedCountries := []string{}
 	countries := make([]bool, len(allCountries))
 	for i, c := range allCountries {
 		countries[i] = (r.FormValue(c) == "on" || r.Method == http.MethodGet)
+		if countries[i] {
+			selectedCountries = append(selectedCountries, c)
+		}
 	}
 
 	locales := make([]bool, len(allLocales))
 	for i, l := range allLocales {
 		locales[i] = (r.FormValue(l) == "on" || r.Method == http.MethodGet)
+		if !isLocaleInCountries(l, selectedCountries) { // unselect places that aren't displayed so they don't interfere with user's selections
+			locales[i] = false
+		}
+	}
+
+	// Get values from form about what member numbers are selected
+	memNumbs := make([]bool, len(allMemberNumbers))
+	for i := range allMemberNumbers {
+		//memNumbs[i] = true
+		memNumbs[i] = (r.FormValue(strconv.Itoa(i+1)) == "on" || r.Method == http.MethodGet) // Name checkboxes just numbers?
 	}
 
 	return filter{
-		order:     ord,
-		created:   [2]int{startMin, startMax},
-		firstAl:   [2]int{albumMin, albumMax},
-		recShow:   [2]int{showMin, showMax},
-		band:      showBand,
-		solo:      showSolo,
-		countries: countries,
-		locales:   locales,
+		order:   ord,
+		created: [2]int{startMin, startMax},
+		firstAl: [2]int{albumMin, albumMax},
+		recShow: [2]int{showMin, showMax},
+		//band:           showBand,
+		//solo:           showSolo,
+		numbsOfMembers: memNumbs,
+		countries:      countries,
+		locales:        locales,
 	}
 }
 
@@ -190,23 +213,30 @@ func filterBy(fil filter, arInfos []artistInfo) []artistInfo {
 		}
 	}
 
+	selectedMemberNums := []int{}
+	for i := 0; i < len(allMemberNumbers); i++ {
+		if fil.numbsOfMembers[i] {
+			selectedMemberNums = append(selectedMemberNums, allMemberNumbers[i])
+		}
+	}
+
 	for _, ai := range arInfos {
-		passes := true
 		if ai.StartDate < fil.created[0] || ai.StartDate > fil.created[1] {
-			passes = false
+			continue
 		}
 		if ai.FirstAlbum.Year() < fil.firstAl[0] || ai.FirstAlbum.Year() > fil.firstAl[1] {
-			passes = false
+			continue
 		}
 		if ai.Gigs[0].Date.Year() < fil.recShow[0] || ai.Gigs[0].Date.Year() > fil.recShow[1] {
-			passes = false
+			continue
 		}
-		if !fil.band && len(ai.Members) > 1 {
-			passes = false
-		}
-		if !fil.solo && len(ai.Members) == 1 {
-			passes = false
-		}
+
+		/* 		if !fil.band && len(ai.Members) > 1 {
+		   			continue
+		   		}
+		   		if !fil.solo && len(ai.Members) == 1 {
+		   			continue
+		   		} */
 
 		foundCountry := false
 		for _, cn := range selectedCountries {
@@ -234,7 +264,14 @@ func filterBy(fil filter, arInfos []artistInfo) []artistInfo {
 			}
 		}
 
-		if passes && foundCountry && foundLocale {
+		foundMembers := false
+		for _, mn := range selectedMemberNums {
+			if len(ai.Members) == mn {
+				foundMembers = true
+			}
+		}
+
+		if foundCountry && foundLocale && foundMembers {
 			aisOut = append(aisOut, ai)
 		}
 	}
