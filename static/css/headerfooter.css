@@ -2,24 +2,12 @@
 /* Header Styling */
 
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    overflow: hidden;
-    position: fixed;
-    top: 0;
-    width: 100%;
+    justify-content: left;
     background-color: var(--light3);
     max-height: 10rem;
-    z-index: 1000;
-}
-
-#header-container {
     display: flex;
-    justify-content: left;
     align-items: center;
     padding: 10px 20px;
-    width: 100%;
     font-size: clamp(10.1px, 1.68vw + 5.05px, 16px);
 }
 
@@ -33,21 +21,17 @@ header a {
 /* Footer Styling */
 
 footer {
-    display: flex;
     justify-content: space-between;
+    /* flex-shrink: 0; */
+    display: flex;
     align-items: center;
-    overflow: hidden;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
     background-color: var(--light3);
     max-height: 10rem;
-    z-index: 1000;
+    padding: 0 20px;
 }
 
-footer p, footer a {
-    font-size: clamp(7.6px, 1.26vw + 3.79px, 12px);
-    
+footer a, footer p {
+    font-size: clamp(7.6px, 1.26vw + 3.79px, 12px);    
     color: var(--neutral-text);
     text-align: center;
     flex-grow: 1;
@@ -75,6 +59,7 @@ footer .dark-btn .material-symbols-outlined {
     color: var(--light-text);
 }
 
-.dark-mode footer .dark-btn .material-symbols-outlined{
+.dark-mode footer .dark-btn .material-symbols-outlined,
+.dark-mode footer p {
     color: var(--dark-text);
 }

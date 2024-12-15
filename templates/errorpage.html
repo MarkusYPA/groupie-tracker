@@ -16,9 +16,10 @@
         }
     </style>
 </head>
-{{ template "header" . }}
 
 <body>
+    {{ template "header" . }}
+
     <div class="artistpage-container">
             <div class="artistbox" style="margin-top: 4rem;">
 
@@ -32,17 +33,13 @@
                         {{.Message2}}</p><br>
 
                     <p><a href="/">Front page</a></p>
-
                 </div>
 
             </div>
-
     </div>
 
     {{ template "footer" . }}
-
     <script src="/static/ui-functions.js"></script>
-
 </body>
 
 </html>
