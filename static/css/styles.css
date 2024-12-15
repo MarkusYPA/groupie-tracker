@@ -37,11 +37,7 @@ body {
     flex-wrap: wrap;
     justify-content: center;
     min-height: 100vh;
-    /* Adapt to screen height */
-    padding-top: 3rem;
-    padding-bottom: 2rem;
-    /* So header/footer doesn't cover any text */
-
+    overflow-y: hidden; /* So it doesn't scroll */
 }
 
 h1 {
@@ -52,10 +48,8 @@ h1 {
 
 h3 {
     font-family: 'Silkscreen', monospace;
-    /* font-size: 1.17em; */ 
     font-size: clamp(12px, 2vw + 6px, 19px);  /* font sizes change at 300-650 px view width */ 
     text-align: center;
-    /* transition: 0.2s ease-out; */
     text-wrap: wrap;
 
 }
