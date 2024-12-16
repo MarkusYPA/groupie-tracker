@@ -107,9 +107,9 @@ func homePageDataValues(f filter, ais []artistInfo) homePageData {
 		display := ""
 		// display only locales from selected countries
 		if isLocaleInCountries(allLocales[i], selectedCountries) {
-			display = `style="display: initial`
+			display = `style="display: initial"`
 		} else {
-			display = `style="display: none`
+			display = `style="display: none"`
 		}
 		locSels = append(locSels, localeSelect{allLocales[i], boo, display})
 	}

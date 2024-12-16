@@ -19,6 +19,7 @@
             <h1>Filter</h1>
             <form method="POST" action="/">
 
+                <button type="submit" style="display:none" name="ghostbutton" value="doesntreset"></button>
                 <button type="submit" name="reset" value="resetfilter">Reset to Defaults</button><br><br>
 
                 <label for="order">Sort:</label>
@@ -105,7 +106,7 @@
                 <br><br>
                 <div class="country-checkboxes">
                     {{ range .Locales}}
-                    <label {{.Display}};"><input type="checkbox" class="localeCB" name="{{.Name}}" {{if
+                    <label {{.Display}};><input type="checkbox" class="localeCB" name="{{.Name}}" {{if
                             .Selected}}checked{{end}}>
                         {{.Name}}</label>
                     {{end}}
