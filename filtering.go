@@ -90,15 +90,46 @@ func newFilter(r *http.Request) filter {
 	ord := r.FormValue("order")
 	startMin, _ := strconv.Atoi(r.FormValue("startmin"))
 	startMax, _ := strconv.Atoi(r.FormValue("startmax"))
+	if startMin < minmaxLimits[0] {
+		startMin = minmaxLimits[0]
+	}
+	if startMin > minmaxLimits[1] {
+		startMin = minmaxLimits[1]
+	}
+	if startMax < minmaxLimits[0] {
+		startMax = minmaxLimits[0]
+	}
+	if startMax > minmaxLimits[1] {
+		startMax = minmaxLimits[1]
+	}
 	if startMax < startMin {
 		startMax = startMin
 	}
 	albumMin, _ := strconv.Atoi(r.FormValue("albummin"))
 	albumMax, _ := strconv.Atoi(r.FormValue("albummax"))
+	if albumMin < minmaxLimits[2] {
+		albumMin = minmaxLimits[2]
+	}
+	if albumMin > minmaxLimits[3] {
+		albumMin = minmaxLimits[3]
+	}
+	if albumMax < minmaxLimits[2] {
+		albumMax = minmaxLimits[2]
+	}
+	if albumMax > minmaxLimits[3] {
+		albumMax = minmaxLimits[3]
+	}
 	if albumMax < albumMin {
 		albumMax = albumMin
 	}
+
 	showMax, _ := strconv.Atoi(r.FormValue("showmax"))
+	if showMax < minmaxLimits[4] {
+		showMax = minmaxLimits[4]
+	}
+	if showMax > minmaxLimits[5] {
+		showMax = minmaxLimits[5]
+	}
 
 	selectedCountries := []string{}
 	countries := make([]bool, len(allCountries))
